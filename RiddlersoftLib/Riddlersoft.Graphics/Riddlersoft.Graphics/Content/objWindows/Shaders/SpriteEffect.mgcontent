@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/SpriteEffect.fx</SourceFile>
+  <SourceTime>2019-01-20T11:26:23.4064163+00:00</SourceTime>
+  <DestFile>C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binWindows/Shaders/SpriteEffect.xnb</DestFile>
+  <DestTime>2020-06-06T16:14:34.3739906+01:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2018-09-18T09:10:12.2274564+01:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2018-09-18T09:10:12.2274564+01:00</ProcessorTime>
+  <Parameters>
+    <Key>DebugMode</Key>
+    <Value>Auto</Value>
+  </Parameters>
+  <Dependencies>
+    <string>C:\Programming\RiddlersoftLib\Riddlersoft.Graphics\Riddlersoft.Graphics\Content\Shaders\Macros.fxh</string>
+  </Dependencies>
+  <BuildAsset />
+  <BuildOutput />
+</PipelineBuildEvent>

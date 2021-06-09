@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PipelineBuildEvent xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SourceFile>C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/BasicLighting.fx</SourceFile>
+  <SourceTime>2020-06-03T17:23:41.0210061+01:00</SourceTime>
+  <DestFile>C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch/Shaders/BasicLighting.xnb</DestFile>
+  <DestTime>2020-06-05T23:25:58.8174375+01:00</DestTime>
+  <Importer>EffectImporter</Importer>
+  <ImporterTime>2018-09-18T09:10:12.2274564+01:00</ImporterTime>
+  <Processor>EffectProcessor</Processor>
+  <ProcessorTime>2018-09-18T09:10:12.2274564+01:00</ProcessorTime>
+  <Parameters>
+    <Key>DebugMode</Key>
+    <Value>Debug</Value>
+  </Parameters>
+  <Dependencies>
+    <string>C:\Programming\RiddlersoftLib\Riddlersoft.Graphics\Riddlersoft.Graphics\Content\Shaders\Macros2D.fxh</string>
+  </Dependencies>
+  <BuildAsset />
+  <BuildOutput>
+    <string>C:\Programming\RiddlersoftLib\Riddlersoft.Graphics\Riddlersoft.Graphics\Content\binSwitch\Shaders\BasicLighting.MainPS.dbg</string>
+  </BuildOutput>
+</PipelineBuildEvent>

@@ -1,0 +1,43 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin
+/intermediateDir:obj
+/platform:Switch
+/config:
+/profile:Reach
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+/reference:..\..\..\..\MonoGame\MonoGame.Switch\Tools\GLSLC\bin\Debug\NvnGlslc.dll
+
+#---------------------------------- Content ---------------------------------#
+
+#begin Shaders/BasicLighting.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/BasicLighting.fx
+
+#begin Shaders/Common.fxh
+/copy:Shaders/Common.fxh
+
+#begin Shaders/Lighting.fxh
+/copy:Shaders/Lighting.fxh
+
+#begin Shaders/Macros.fxh
+/copy:Shaders/Macros.fxh
+
+#begin Shaders/Macros2D.fxh
+/copy:Shaders/Macros2D.fxh
+
+#begin Shaders/Mask.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Mask.fx
+
+#begin Shaders/Structures.fxh
+/copy:Shaders/Structures.fxh
+

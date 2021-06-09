@@ -1,0 +1,6 @@
+Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
+"C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/Common.fxh","C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch\Shaders/Common.fxh","CopyItem","File",1305,1305,0.0020004
+"C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/Lighting.fxh","C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch\Shaders/Lighting.fxh","CopyItem","File",2909,2909,0.0070118
+"C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/Macros.fxh","C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch\Shaders/Macros.fxh","CopyItem","File",2773,2773,0.0020006
+"C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/Macros2D.fxh","C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch\Shaders/Macros2D.fxh","CopyItem","File",3098,3098,0.0010002
+"C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/Shaders/Structures.fxh","C:/Programming/RiddlersoftLib/Riddlersoft.Graphics/Riddlersoft.Graphics/Content/binSwitch\Shaders/Structures.fxh","CopyItem","File",3281,3281,0.008002

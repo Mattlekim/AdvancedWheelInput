@@ -1,0 +1,90 @@
+
+#----------------------------- Global Properties ----------------------------#
+
+/outputDir:bin$(Platform)
+/intermediateDir:obj$(Platform)
+/platform:Windows
+/config:
+/profile:HiDef
+/compress:False
+
+#-------------------------------- References --------------------------------#
+
+
+#---------------------------------- Content ---------------------------------#
+
+#begin sparkline.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sparkline.png
+
+#begin sparklineglow.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:sparklineglow.png
+
+#begin Shaders/BasicLighting.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Debug
+/build:Shaders/BasicLighting.fx
+
+#begin Shaders/Common.fxh
+/copy:Shaders/Common.fxh
+
+#begin Shaders/Lighting.fxh
+/copy:Shaders/Lighting.fxh
+
+#begin Shaders/Macros.fxh
+/copy:Shaders/Macros.fxh
+
+#begin Shaders/Macros2D.fxh
+/copy:Shaders/Macros2D.fxh
+
+#begin Shaders/Mask.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/Mask.fx
+
+#begin Shaders/Structures.fxh
+/copy:Shaders/Structures.fxh
+
+#begin Shaders/SpriteEffect.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/SpriteEffect.fx
+
+#begin Shaders/NormalMapLighting.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/NormalMapLighting.fx
+
+#begin Shaders/AlphaMask.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/AlphaMask.fx
+
+#begin Shaders/GaussianBlur.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/GaussianBlur.fx
+

@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.4</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\BaseCamera.cs" Link="BaseCamera.cs" />
+    <Compile Include="..\Disk\DiskHandler.cs" Link="Disk\DiskHandler.cs" />
+    <Compile Include="..\Disk\DiskState.cs" Link="Disk\DiskState.cs" />
+    <Compile Include="..\Disk\FileFormat.cs" Link="Disk\FileFormat.cs" />
+    <Compile Include="..\KeyboardAPI.cs" Link="KeyboardAPI.cs" />
+    <Compile Include="..\Mouse.cs" Link="Mouse.cs" />
+    <Compile Include="..\PasswordGen.cs" Link="PasswordGen.cs" />
+    <Compile Include="..\Screen.cs" Link="Screen.cs" />
+    <Compile Include="..\StringFormatter.cs" Link="StringFormatter.cs" />
+    <Compile Include="..\UsfullStructures.cs" Link="UsfullStructures.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Disk\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MonoGame.Framework">
+      <HintPath>C:\Program Files (x86)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

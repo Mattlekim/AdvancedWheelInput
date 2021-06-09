@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <AssemblyName>MySqlDI</AssemblyName>
+    <RootNamespace>MySqlDI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Example\**" />
+    <Compile Remove="php\**" />
+    <EmbeddedResource Remove="Example\**" />
+    <EmbeddedResource Remove="php\**" />
+    <None Remove="Example\**" />
+    <None Remove="php\**" />
+  </ItemGroup>
+
+</Project>
