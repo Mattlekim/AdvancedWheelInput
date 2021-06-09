@@ -53,6 +53,7 @@
     <Compile Include="SimpleMouse.cs" />
     <Compile Include="UI\SecondClutchButton.cs" />
     <Compile Include="UI\Slider.cs" />
+    <Compile Include="UI\Surface.cs" />
     <Compile Include="UI\UiEliment.cs" />
     <Compile Include="WheelState.cs" />
   </ItemGroup>
