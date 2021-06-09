@@ -44,6 +44,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AdvanceWheelcs.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="ConfigArea.cs" />
     <Compile Include="Game1.cs" />

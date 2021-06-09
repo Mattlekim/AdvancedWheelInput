@@ -47,11 +47,24 @@ namespace AdvancedInput.UI
         /// <summary>
         /// weather the compoante is active or not
         /// </summary>
-        public bool Active = true;
+        protected bool _active = true;
      
         //visibility of the element
         public float Visiblity = 1f;
 
+        public void Activate()
+        {
+            _active = true;
+            foreach (UiEliment ui in Elements)
+                ui.Activate();
+        }
+
+        public void Deactive()
+        {
+            _active = false;
+            foreach (UiEliment ui in Elements)
+                ui.Deactive();
+        }
         /// <summary>
         /// construct the element
         /// </summary>
@@ -89,7 +102,7 @@ namespace AdvancedInput.UI
 
         public virtual void Update(float dt)
         {
-            if (!Active)
+            if (!_active)
                 return;
 
             if (!SimpleMouse.IsLButtonDown)
@@ -101,7 +114,7 @@ namespace AdvancedInput.UI
 
         public virtual void Draw(SpriteBatch sb)
         {
-            if (!Active)
+            if (!_active)
                 return;
 
             foreach (UiEliment ui in _elements) //draw all ui elements
@@ -125,7 +138,7 @@ namespace AdvancedInput.UI
         /// <param name="pos">mose postion</param>
         private void MouseLeftClick(Vector2 pos)
         {
-            if (!Active)
+            if (!_active)
                 return;
 
             if (_currentArea.Contains(pos.ToPoint())) //validate the click to make sure its on the button
@@ -142,7 +155,7 @@ namespace AdvancedInput.UI
         /// <param name="pos">mose postion</param>
         private void MouseButtonDown(Vector2 pos)
         {
-            if (!Active)
+            if (!_active)
                 return;
 
             if (_isLMouseDown)

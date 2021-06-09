@@ -98,7 +98,7 @@ namespace AdvancedInput.UI
 
         public override void Update(float dt)
         {
-            if (!Active)
+            if (!_active)
                 return;
             //showing save display
             _showSaved -= dt;
@@ -132,9 +132,15 @@ namespace AdvancedInput.UI
 
         }       
 
+        public void UpdateSliders()
+        {
+            _slBitingPoint.Current = Wheel._secondClutchBitingPoint;
+            _slReleaseTime.Current = 1f / (Wheel._secondClutchRelaseTime * 3f);
+        }
+
         public override void OnLClick(Vector2 pos)
         {
-            if (!Active)
+            if (!_active)
                 return;
             if (Wheel._secondClutchButtonIndex == -1)
                 _detectSecondClutchInput = true;
@@ -143,7 +149,7 @@ namespace AdvancedInput.UI
 
         public override void Draw(SpriteBatch sb)
         {
-            if (!Active)
+            if (!_active)
                 return;
 
             //draw save text when needed

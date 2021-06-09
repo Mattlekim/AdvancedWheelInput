@@ -67,7 +67,7 @@ namespace AdvancedInput.UI
         public override void Draw(SpriteBatch sb)
         {
 
-            if (!Active)
+            if (!_active)
                 return;
 
             sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction)); //draw the button color

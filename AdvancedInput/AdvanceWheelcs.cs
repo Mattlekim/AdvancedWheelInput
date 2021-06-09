@@ -60,7 +60,7 @@ namespace AdvancedInput
         /// <summary>
         /// the inputs for making ajustments with the wheel
         /// </summary>
-        internal int[] _directionButtons = new int[4] { -1, -1, -1, -1 };
+        internal Input[] _directionButtons = new Input[4] { -1, -1, -1, -1 };
 
         private CardinalDirection _inputDirection = CardinalDirection.None;
         /// <summary>
@@ -70,7 +70,7 @@ namespace AdvancedInput
         /// <summary>
         ///  the wheel index
         /// </summary>
-        private int _inputWheelIndex = -1;
+        private Input _inputWheelIndex = -1;
         /// <summary>
         /// it id for the wheel so when we reload we can make sure we have the correct one
         /// we do this incase winodws loads in the gamepads in a different order
@@ -118,7 +118,7 @@ namespace AdvancedInput
 
 
         Surface _surfaceSettings;
-        Button _secondClutchButton;
+        SecondClutchButton _secondClutchButton;
         Button _bntSettings;
         public AdvanceWheel(Game game)
         {
@@ -143,9 +143,9 @@ namespace AdvancedInput
             {
                 TextName = "Settings",
                 TextColour = Color.Black,
-                Active = false,
                 PrimaryColour = Color.LightBlue * .4f,
             };
+           
 
             _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 75, 150, 150))
             {
@@ -158,7 +158,7 @@ namespace AdvancedInput
                     _currentState = WheelState.Config;
                     _configState = ConfigArea.SetDirectionInput;
                     _inputDirection = CardinalDirection.Up;
-                    _surfaceSettings.Active = false;
+                    _surfaceSettings.Deactive();
                 }
             });
 
@@ -173,7 +173,7 @@ namespace AdvancedInput
                     _currentState = WheelState.Config;
                     _configState = ConfigArea.SetDirectionInput;
                     _inputDirection = CardinalDirection.Down;
-                    _surfaceSettings.Active = false;
+                    _surfaceSettings.Deactive();
                 }
             });
 
@@ -188,7 +188,7 @@ namespace AdvancedInput
                     _currentState = WheelState.Config;
                     _configState = ConfigArea.SetDirectionInput;
                     _inputDirection = CardinalDirection.Left;
-                    _surfaceSettings.Active = false;
+                    _surfaceSettings.Deactive();
                 }
             });
 
@@ -203,9 +203,11 @@ namespace AdvancedInput
                     _currentState = WheelState.Config;
                     _configState = ConfigArea.SetDirectionInput;
                     _inputDirection = CardinalDirection.Right;
-                    _surfaceSettings.Active = false;
+                    _surfaceSettings.Deactive();
                 }
             });
+
+            _surfaceSettings.Deactive();
             _uiElements.Add(_surfaceSettings);
             UpdateSuraceButtons();
         }
@@ -219,7 +221,7 @@ namespace AdvancedInput
                 {
                     if (b.ButtonText.Contains("Up"))
                     {
-                        if (_directionButtons[(int)CardinalDirection.Up] == -1)
+                        if (_directionButtons[(int)CardinalDirection.Up].Index == -1)
                         {
                             b.ButtonText = "  Up Button\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
@@ -233,7 +235,7 @@ namespace AdvancedInput
 
                     if (b.ButtonText.Contains("Down"))
                     {
-                        if (_directionButtons[(int)CardinalDirection.Down] == -1)
+                        if (_directionButtons[(int)CardinalDirection.Down].Index == -1)
                         {
                             b.ButtonText = "  Down Button\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
@@ -247,7 +249,7 @@ namespace AdvancedInput
 
                     if (b.ButtonText.Contains("Left"))
                     {
-                        if (_directionButtons[(int)CardinalDirection.Left] == -1)
+                        if (_directionButtons[(int)CardinalDirection.Left].Index == -1)
                         {
                             b.ButtonText = "  Left Button\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
@@ -261,7 +263,7 @@ namespace AdvancedInput
 
                     if (b.ButtonText.Contains("Right"))
                     {
-                        if (_directionButtons[(int)CardinalDirection.Right] == -1)
+                        if (_directionButtons[(int)CardinalDirection.Right].Index == -1)
                         {
                             b.ButtonText = "  Right Button\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
@@ -294,16 +296,53 @@ namespace AdvancedInput
                 Icon = _iconConfig,
                 OnClick = (Button ui) =>
                 {
-                    _surfaceSettings.Active = true;
-                    _secondClutchButton.Active = false;
-                    _bntSettings.Active = false;
+                    _surfaceSettings.Activate();
+                    _secondClutchButton.Deactive();
+                    _bntSettings.Deactive();
                 }
             };
 
             _uiElements.Add(_bntSettings);
         }
 
-        public int GetInputButton()
+        public bool IsWheelInputPressed(Input i)
+        {
+            if (i.Type == InputType.Button)
+            {
+                if (_inputWheel.Buttons != null)
+                    if (_inputWheel.Buttons.Length > 0 && i.Index >= 0 && i.Index < _inputWheel.Buttons.Length)
+                        if (_inputWheel.Buttons[i.Index] == ButtonState.Pressed)
+                            return true;
+
+            }
+            else
+            {
+                if (_inputWheel.Hats != null)
+                    if (_inputWheel.Hats.Length > 0)
+                        if (i.Index >= 0 && i.Index < _inputWheel.Hats.Length)
+                        {
+                            if (i.Type == InputType.HatUp)
+                                if (_inputWheel.Hats[i.Index].Up == ButtonState.Pressed)
+                                    return true;
+
+                            if (i.Type == InputType.HatDown)
+                                if (_inputWheel.Hats[i.Index].Down == ButtonState.Pressed)
+                                    return true;
+
+                            if (i.Type == InputType.HatLeft)
+                                if (_inputWheel.Hats[i.Index].Left == ButtonState.Pressed)
+                                    return true;
+
+                            if (i.Type == InputType.HatRight)
+                                if (_inputWheel.Hats[i.Index].Right == ButtonState.Pressed)
+                                    return true;
+                        }
+            }
+
+                return false;
+            }
+
+        public Input GetInputButton()
         {
             JoystickCapabilities jCapabilityes;
             JoystickState jState;
@@ -311,17 +350,33 @@ namespace AdvancedInput
             {
                 jCapabilityes = Joystick.GetCapabilities(i); //get joystick capabilitys
                 if (jCapabilityes.IsConnected) //if is connectec
+                {
+                    jState = Joystick.GetState(i); //get its state
                     if (jCapabilityes.ButtonCount > 0) //make sure it has buttons
                     {
-                        jState = Joystick.GetState(i); //get its state
+                        
                         for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                             if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                             {
-                                
-                                SaveConfig(); //save the config
                                 return i;
                             }
                     }
+
+                    for (int c = 0; c < jCapabilityes.HatCount; c++)
+                    {
+                        if (jState.Hats[c].Up == ButtonState.Pressed)
+                            return new Input(InputType.HatUp, c);
+
+                        if (jState.Hats[c].Down == ButtonState.Pressed)
+                            return new Input(InputType.HatDown, c);
+
+                        if (jState.Hats[c].Left == ButtonState.Pressed)
+                            return new Input(InputType.HatLeft, c);
+
+                        if (jState.Hats[c].Right == ButtonState.Pressed)
+                            return new Input(InputType.HatRight, c);
+                    }
+                }
             }
             return -1;
         }
@@ -356,7 +411,7 @@ namespace AdvancedInput
                 return;
             }
 
-            if (_inputWheelIndex == -1) //check to make sure we have an input device
+            if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
                 return;
 
             switch (_currentState)
@@ -364,6 +419,21 @@ namespace AdvancedInput
                 case WheelState.Run:
                     foreach (UiEliment b in _uiElements)
                         b.Update(dt);
+
+
+                    if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Up]))
+                    {
+                        _secondClutchBitingPoint += .01f;
+                        _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                        _secondClutchButton.UpdateSliders();
+                    }
+
+                    if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Down]))
+                    {
+                        _secondClutchBitingPoint -= .01f;
+                        _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                        _secondClutchButton.UpdateSliders();
+                    }
                     break;
 
                 case WheelState.Config:
@@ -374,12 +444,12 @@ namespace AdvancedInput
                                 foreach (UiEliment b in _uiElements)
                                     b.Update(dt);
                                 return;*/
-                            int bnt = GetInputButton();
-                            if (bnt != -1) //if a button is press
+                            Input bnt = GetInputButton();
+                            if (bnt.Index != -1) //if a button is press
                             {
                                 _directionButtons[(int)_inputDirection] = bnt;
                                 _currentState = WheelState.Run;
-                                _surfaceSettings.Active = true;
+                                _surfaceSettings.Activate();
                                 UpdateSuraceButtons();
                                 SaveConfig();
                             }
@@ -390,7 +460,7 @@ namespace AdvancedInput
 
             
 
-            _inputWheel = Joystick.GetState(_inputWheelIndex); //get the input
+            _inputWheel = Joystick.GetState(_inputWheelIndex.Index); //get the input
 
             _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
 
@@ -399,7 +469,7 @@ namespace AdvancedInput
             if (_inputWheel.Buttons != null) //check that the current input has buttons
                 if (_inputWheel.Buttons.Length > 0) //Make sure we have a button
                 {
-                    if (_inputWheelIndex > -1 && _secondClutchButtonIndex > -1) //check things are set up
+                    if (_inputWheelIndex.Index > -1 && _secondClutchButtonIndex > -1) //check things are set up
                         if (_secondClutchButtonIndex < _inputWheel.Buttons.Length) //make sure index exist
                         if (_inputWheel.Buttons[_secondClutchButtonIndex] == ButtonState.Pressed) //if its pressed
                             DepressSecondClutch(); //depresse the clutch
@@ -464,7 +534,16 @@ namespace AdvancedInput
                 writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex);
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
-                writer.WriteAttributeArray<int>("DirectionalButtons", _directionButtons);
+                
+                    writer.WriteAttributeEnum<InputType>("InputUpType", _directionButtons[(int)CardinalDirection.Up].Type);
+                    writer.WriteAttributeInt("InputUpIndex", _directionButtons[(int)CardinalDirection.Up].Index);
+                    writer.WriteAttributeEnum<InputType>("InputDownType", _directionButtons[(int)CardinalDirection.Down].Type);
+                    writer.WriteAttributeInt("InputDownIndex", _directionButtons[(int)CardinalDirection.Down].Index);
+                    writer.WriteAttributeEnum<InputType>("InputLeftType", _directionButtons[(int)CardinalDirection.Left].Type);
+                    writer.WriteAttributeInt("InputLeftIndex", _directionButtons[(int)CardinalDirection.Left].Index);
+                    writer.WriteAttributeEnum<InputType>("InputRightType", _directionButtons[(int)CardinalDirection.Right].Type);
+                    writer.WriteAttributeInt("InputRightIndex", _directionButtons[(int)CardinalDirection.Right].Index);
+                
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Close();
@@ -474,7 +553,10 @@ namespace AdvancedInput
         public void LoadConfig()
         {
             if (!File.Exists(_configFile))
+            {
+                SaveConfig();
                 return;
+            }
             try
             {
                 using (FileStream stream = File.OpenRead(_configFile))
@@ -488,9 +570,23 @@ namespace AdvancedInput
                             _secondClutchButtonIndex = reader.ReadAttributeInt("SecondClutch");
                             _secondClutchBitingPoint = reader.ReadAttributeFloat("SecondClutchBite");
                             _secondClutchRelaseTime = reader.ReadAttributeFloat("SecondClutchReleaseTime");
-                            _directionButtons = reader.ReadAttributeArrayOfInt("DirectionalButtons");
-                            if (_directionButtons == null || _directionButtons.Length == 0)
-                                _directionButtons = new int[4] { -1, -1, -1, -1 };
+
+
+                            InputType t = reader.ReadAttributeEnum<InputType>("InputUpType");
+                            int i = reader.ReadAttributeInt("InputUpIndex");
+                            _directionButtons[(int)CardinalDirection.Up] = new Input(t, i);
+
+                            t = reader.ReadAttributeEnum<InputType>("InputDownType");
+                            i = reader.ReadAttributeInt("InputDownIndex");
+                            _directionButtons[(int)CardinalDirection.Down] = new Input(t, i);
+
+                            t = reader.ReadAttributeEnum<InputType>("InputLeftType");
+                            i = reader.ReadAttributeInt("InputLeftIndex");
+                            _directionButtons[(int)CardinalDirection.Left] = new Input(t, i);
+
+                            t = reader.ReadAttributeEnum<InputType>("InputRightType");
+                            i = reader.ReadAttributeInt("InputRightIndex");
+                            _directionButtons[(int)CardinalDirection.Right] = new Input(t, i);
                         }
                     }
 

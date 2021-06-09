@@ -24,7 +24,7 @@ namespace AdvancedInput.UI
         public override void Draw(SpriteBatch sb)
         {
 
-            if (!Active)
+            if (!_active)
                 return;
 
             sb.Draw(Dot, new Rectangle(0, 0, 500, 500), PrimaryColour);
