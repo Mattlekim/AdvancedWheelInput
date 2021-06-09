@@ -10,6 +10,6 @@ namespace AdvancedInput
     {
         DetectJoystickInput,
         DetectClutch,
-    
+        SetDirectionInput;
     }
 }

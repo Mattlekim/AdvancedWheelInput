@@ -56,6 +56,12 @@ namespace AdvancedInput
         /// </summary>
         internal int _secondClutchButtonIndex = -1;
 
+
+        /// <summary>
+        /// the inputs for making ajustments with the wheel
+        /// </summary>
+        internal int _downInputIndex, _upInputIndex, _leftInputIndex, _rightInputIndex;
+
         /// <summary>
         /// the wheel input
         /// </summary>
@@ -94,6 +100,7 @@ namespace AdvancedInput
         /// THIS NOW NEED CHANGING TO UiEelements
         /// </summary>
         private List<Button> _buttons = new List<Button>();
+
 
         /// <summary>
         /// depress the second clutch
@@ -179,6 +186,16 @@ namespace AdvancedInput
                 case WheelState.Run:
                     foreach (Button b in _buttons)
                         b.Update(dt);
+                    break;
+
+                case WheelState.Config:
+                    switch (_configState)
+                    {
+                        case ConfigArea.SetDirectionInput:
+                            foreach (Button b in _buttons)
+                                b.Update(dt);
+                            return;
+                    }
                     break;
             }
 

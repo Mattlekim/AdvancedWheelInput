@@ -107,8 +107,10 @@ namespace AdvancedInput.UI
             _flasher += dt * 2; //flasher to display text to flas
             if (_flasher > 1)
                 _flasher -= 2; //limit it to -1 to 1
+
             if (Wheel._inputWheel.Buttons == null)  //check that the current input wheel has buttons
                 return;
+
 
             if (_detectSecondClutchInput) //if we are waiting to detect a button press for clutch
             {

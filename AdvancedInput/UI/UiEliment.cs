@@ -42,6 +42,10 @@ namespace AdvancedInput.UI
         protected Rectangle _currentArea;
         public Rectangle CurrentArea { get { return _currentArea; } }
 
+        /// <summary>
+        /// weather the compoante is active or not
+        /// </summary>
+        public bool Active = true;
      
         //visibility of the element
         public float Visiblity = 1f;
@@ -83,6 +87,9 @@ namespace AdvancedInput.UI
 
         public virtual void Update(float dt)
         {
+            if (!Active)
+                return;
+
             if (!SimpleMouse.IsLButtonDown)
                 _isLMouseDown = false; //reset the flag
             _isClicked = false; //reset is clicked flag
@@ -113,6 +120,8 @@ namespace AdvancedInput.UI
         /// <param name="pos">mose postion</param>
         private void MouseLeftClick(Vector2 pos)
         {
+            if (!Active)
+                return;
 
             if (_currentArea.Contains(pos.ToPoint())) //validate the click to make sure its on the button
             {
@@ -128,6 +137,9 @@ namespace AdvancedInput.UI
         /// <param name="pos">mose postion</param>
         private void MouseButtonDown(Vector2 pos)
         {
+            if (!Active)
+                return;
+
             if (_isLMouseDown)
             {
                 OnLButtonDown(pos);
