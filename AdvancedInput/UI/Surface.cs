@@ -27,6 +27,7 @@ namespace AdvancedInput.UI
 
             if (!Active)
                 return;
+
             if (TextName != null)
                 sb.DrawString(Font, TextName, _currentArea.TopLeft(), TextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
         }

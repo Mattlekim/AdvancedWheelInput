@@ -43,7 +43,7 @@ namespace Riddlersoft.Core.Extentions
             if (IncludeCords)
                 return new Vector2(source.Width * .5f + source.X, source.Height * .5f + source.Y);
 
-            return new Vector2(source.Width * .5f, source.Height);
+            return new Vector2(source.Width * .5f, source.Height * .5f);
         }
 
         /// <summary>

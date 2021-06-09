@@ -115,9 +115,10 @@ namespace AdvancedInput
 
         }
 
-        
-        
 
+        Surface _surfaceSettings;
+        Button _secondClutchButton;
+        Button _bntSettings;
         public AdvanceWheel(Game game)
         {
             _game = game; //set the game
@@ -134,13 +135,15 @@ namespace AdvancedInput
 
             LoadConfig(); //try to load the config
 
-            _uiElements.Add(new SecondClutchButton(this)); //add our clutch ui button
+            _secondClutchButton = new SecondClutchButton(this);
+            _uiElements.Add(_secondClutchButton); //add our clutch ui button
 
-            _uiElements.Add(new Surface()
+            _surfaceSettings = new Surface()
             {
                 TextName = "Settings",
                 Active = false,
-            });
+            };
+            _uiElements.Add(_surfaceSettings);
         }
 
         /// <summary>
@@ -155,6 +158,19 @@ namespace AdvancedInput
             _dot.SetData<Color>(new Color[1] { Color.White }); //set color of dot to white
 
             UiEliment.LoadContent(_dot, _font); //load ui element content
+
+            _bntSettings = new Button(this, new Rectangle(420, 0, 80, 80))
+            {
+                Icon = _iconConfig,
+                OnClick = (Button ui) =>
+                {
+                    _surfaceSettings.Active = true;
+                    _secondClutchButton.Active = false;
+                    _bntSettings.Active = false;
+                }
+            };
+
+            _uiElements.Add(_bntSettings);
         }
 
         public void Update(float dt)

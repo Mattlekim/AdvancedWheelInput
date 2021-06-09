@@ -98,6 +98,8 @@ namespace AdvancedInput.UI
 
         public override void Update(float dt)
         {
+            if (!Active)
+                return;
             //showing save display
             _showSaved -= dt;
             _showSaved = MathHelper.Clamp(_showSaved, 0, 1);
@@ -132,6 +134,8 @@ namespace AdvancedInput.UI
 
         public override void OnLClick(Vector2 pos)
         {
+            if (!Active)
+                return;
             if (Wheel._secondClutchButtonIndex == -1)
                 _detectSecondClutchInput = true;
            
@@ -139,6 +143,9 @@ namespace AdvancedInput.UI
 
         public override void Draw(SpriteBatch sb)
         {
+            if (!Active)
+                return;
+
             //draw save text when needed
             sb.Draw(Dot, new Rectangle(0, 450, 500, 50), Color.OrangeRed * _showSaved);
             sb.DrawString(Font, "Saved Setup", new Vector2(250, 475), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);

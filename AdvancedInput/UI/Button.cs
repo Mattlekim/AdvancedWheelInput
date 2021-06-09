@@ -35,6 +35,7 @@ namespace AdvancedInput.UI
         /// </summary>
         public string ButtonText = string.Empty;
 
+        public Texture2D Icon;
         /// <summary>
         /// creates a new button
         /// </summary>
@@ -65,10 +66,15 @@ namespace AdvancedInput.UI
 
         public override void Draw(SpriteBatch sb)
         {
-            
+
             sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction)); //draw the button color
             base.Draw(sb);
 
+            if (Icon != null)
+            {
+                sb.Draw(Icon, _currentArea.Center(true), null, Color.White, 0f, _currentArea.Center(false) / .6f , .4f, SpriteEffects.None, 0f);
+            }
+            else
             if (ButtonText != string.Empty) //draw test
                 sb.DrawString(Font, ButtonText, _currentArea.Center(true), TextColour, 0f, Font.MeasureString(ButtonText) * .5f, TextScale, SpriteEffects.None, 0f);
         }
