@@ -183,7 +183,9 @@ namespace AdvancedInput.UI
             {
                 sb.Draw(Dot, new Rectangle(300, 0, 200, 400), Color.Black * .5f);
                 sb.DrawString(Font, "Connected", new Vector2(330, 20), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"Mph {Math.Round(Wheel._telemitry.SpeedMph,1)}", new Vector2(330, 20), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Mph {Math.Round(Wheel._telemitry.SpeedMph,1)}", new Vector2(330, 60), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                for (int i = 0; i < Wheel._telemitry.ZeroToSixty.Count; i++)
+                    sb.DrawString(Font, $"{Wheel._telemitry.ZeroToSixty[i]}", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
 
             }
         }
