@@ -39,6 +39,9 @@ namespace AdvancedInput
             // TODO: Add your initialization logic here
             Components.Add(new SimpleMouse(this));
             Components.Add(new KeyboardAPI(this));
+            Components.Add(new IRacingTelemitry(this));
+            float tet = 1f / 80f;
+            this.TargetElapsedTime = new System.TimeSpan(0,0,0,0, (int)(tet * 1000));
             //KeyboardAPI.Active
             base.Initialize();
         }

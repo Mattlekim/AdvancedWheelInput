@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AdvanceWheelcs.cs" />
     <Compile Include="Input.cs" />
+    <Compile Include="IracingTelemitry.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="ConfigArea.cs" />
     <Compile Include="Game1.cs" />
@@ -59,12 +60,18 @@
     <Compile Include="WheelState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="iRacingSDK, Version=1.0.0.43, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\iRacingSDK.1.0.0.43\lib\net40-client\iRacingSDK.dll</HintPath>
+    </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.5.1.0\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon.ico" />
@@ -118,6 +125,7 @@
     </None>
     <None Include="app.config" />
     <None Include="app.manifest" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RiddlersoftLib\Core\Core.csproj">
