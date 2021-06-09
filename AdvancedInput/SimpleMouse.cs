@@ -25,7 +25,10 @@ namespace AdvancedInput
 
         public static bool IsLButtonDown { get { return _MouseState.LeftButton == ButtonState.Pressed; } }
 
-
+        public static void Reset()
+        {
+            _LMouseState = _MouseState;
+        }
         public SimpleMouse(Game game) : base(game)
         {
             if (_HaveIntialized) //initalize the stuff we neeed

@@ -31,14 +31,14 @@ namespace AdvancedInput.UI
         private float _showSaved = 0;
 
 
-        public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(100,100,300,300))
+        public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0,0,500,400))
         {
             //some basic formatting
-            PrimaryColour = Color.Red * .5f;
+            PrimaryColour = Color.Red * .3f;
             SecondryColour = Color.OrangeRed * .5f;
             
             //----------------CREATE UI ELEMENTS---------------------------
-            _slBitingPoint = new UI.Slider(new Rectangle(150, 180, 50, 200), 1, 0, .8f)
+            _slBitingPoint = new UI.Slider(new Rectangle(50, 80, 50, 200), 1, 0, .8f)
             {
                 TextName = "Biting Point",
                 TextScale = .5f,
@@ -49,7 +49,7 @@ namespace AdvancedInput.UI
                 },
             };
 
-            _slReleaseTime = new UI.Slider(new Rectangle(250, 180, 50, 200), 3, 0, .5f)
+            _slReleaseTime = new UI.Slider(new Rectangle(150, 80, 50, 200), 3, 0, .5f)
             {
                 TextName = "Release Time\n(Seconds)",
                 TextScale = .3f,
@@ -60,7 +60,7 @@ namespace AdvancedInput.UI
                 },
             };
 
-            _bntSetInput = new UI.Button(wheel, new Rectangle(310, 180, 80, 80))
+            _bntSetInput = new UI.Button(wheel, new Rectangle(210, 80, 80, 80))
             {
                 PrimaryColour = Color.Green,
                 SecondryColour = Color.OrangeRed,
@@ -73,7 +73,7 @@ namespace AdvancedInput.UI
                 }
             };
 
-            _bntSaveConfig = new UI.Button(wheel, new Rectangle(310, 330, 80, 50))
+            _bntSaveConfig = new UI.Button(wheel, new Rectangle(210, 230, 80, 50))
             {
                 PrimaryColour = Color.Orange,
                 SecondryColour = Color.OrangeRed,
@@ -160,7 +160,7 @@ namespace AdvancedInput.UI
             if (Wheel._secondClutchButtonIndex == -1) //if we dont have a button set
             {
 
-               
+
 
                 if (_detectSecondClutchInput) //if wating for user to press a button display a promt
                     sb.DrawString(Wheel._font, "Press button for second clutch mapping", new Vector2(250, 250), Color.White * (_flasher * _flasher), 0f,
@@ -168,20 +168,24 @@ namespace AdvancedInput.UI
                 else
                 {
                     //standard text layout
-                    sb.DrawString(Wheel._font, "Clutch", new Vector2(110, 110), Color.White);
+                    sb.DrawString(Wheel._font, "Clutch", new Vector2(10, 10), Color.White);
                     sb.DrawString(Wheel._font, "Click to set up", new Vector2(110, 165), Color.White * (.5f), 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
                     sb.Draw(Wheel._iconConfig, new Vector2(300, 105), null, Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
                 }
                 return;
             }
-            else
+
+
+            sb.DrawString(Wheel._font, "Clutch", new Vector2(10, 10), Color.White);
+            base.Draw(sb);
+
+            if (Wheel._telemitry.IsConnected)
             {
-                sb.DrawString(Wheel._font, "Clutch", new Vector2(110, 110), Color.White);
-                base.Draw(sb);
+                sb.Draw(Dot, new Rectangle(300, 0, 200, 400), Color.Black * .5f);
+                sb.DrawString(Font, "Connected", new Vector2(330, 20), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Mph {Math.Round(Wheel._telemitry.SpeedMph,1)}", new Vector2(330, 20), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+
             }
-         
-
-
         }
 
         public override void OnLButtonDown(Vector2 pos)

@@ -12,9 +12,23 @@ namespace AdvancedInput
 {
     class IRacingTelemitry : GameComponent
     {
-        private bool _wasConnected = false;
+
+        public float SpeedMph { get; private set; }
+
+        public bool IsConnected { get; private set; } = false;
+        private float _timeSinceGotData = 5f;
         public IRacingTelemitry(Game game) : base(game)
         {
+            iRacing.NewData += iRacing_NewData;
+            iRacing.StartListening();
+            _timeSinceGotData = 5f;
+        }
+
+        void iRacing_NewData(DataSample data)
+        {
+            
+            SpeedMph = data.Telemetry.Speed * 2.25f;
+            IsConnected = true;
         }
 
         private void OnConnectedToIracing()
@@ -22,10 +36,6 @@ namespace AdvancedInput
 
            
            
-            foreach (var data in iRacing.GetDataFeed().TakeWhile(d => !d.IsConnected))
-            {
-                
-            }
 
         }
 
@@ -37,20 +47,10 @@ namespace AdvancedInput
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            _timeSinceGotData -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (!iRacing.IsConnected)
-            {
-
-                _wasConnected = false;
-                return;
-            }
-
-            if (!_wasConnected)
-            {
-                OnConnectedToIracing();
-            }
-
-            _wasConnected = true;
+            if (_timeSinceGotData <= 0)
+                IsConnected = false;
         }
     }
 }

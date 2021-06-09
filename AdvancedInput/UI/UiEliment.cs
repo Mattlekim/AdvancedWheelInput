@@ -52,9 +52,10 @@ namespace AdvancedInput.UI
         //visibility of the element
         public float Visiblity = 1f;
 
+        private bool _activateNextUpdate = false;
         public void Activate()
         {
-            _active = true;
+            _activateNextUpdate = true;
             foreach (UiEliment ui in Elements)
                 ui.Activate();
         }
@@ -102,6 +103,12 @@ namespace AdvancedInput.UI
 
         public virtual void Update(float dt)
         {
+            if (_activateNextUpdate)
+            {
+                _activateNextUpdate = false;
+                _active = true;
+            }
+
             if (!_active)
                 return;
 

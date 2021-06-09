@@ -120,9 +120,11 @@ namespace AdvancedInput
         Surface _surfaceSettings;
         SecondClutchButton _secondClutchButton;
         Button _bntSettings;
+        internal IRacingTelemitry _telemitry;
         public AdvanceWheel(Game game)
         {
             _game = game; //set the game
+            _telemitry = _game.Components[2] as IRacingTelemitry;
             _virtualJoyStick = new VirtualJoystick(1); //get the first virutal joystick
             try
             {
@@ -205,6 +207,21 @@ namespace AdvancedInput
                     _inputDirection = CardinalDirection.Right;
                     _surfaceSettings.Deactive();
                 }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(420, 440, 80, 60))
+            {
+                PrimaryColour = Color.Black * .2f,
+                ButtonText = "Back",
+                TextScale = .6f,
+                OnClick = (Button b) =>
+                {
+                    SimpleMouse.Reset();
+                    _surfaceSettings.Deactive();
+                    _secondClutchButton.Activate();
+                    _bntSettings.Activate();
+                }
+            
             });
 
             _surfaceSettings.Deactive();
@@ -291,9 +308,10 @@ namespace AdvancedInput
 
             UiEliment.LoadContent(_dot, _font); //load ui element content
 
-            _bntSettings = new Button(this, new Rectangle(420, 0, 80, 80))
+            _bntSettings = new Button(this, new Rectangle(420, 420, 80, 80))
             {
                 Icon = _iconConfig,
+                PrimaryColour = Color.LightBlue * 0,
                 OnClick = (Button ui) =>
                 {
                     _surfaceSettings.Activate();
@@ -425,6 +443,7 @@ namespace AdvancedInput
                     {
                         _secondClutchBitingPoint += .01f;
                         _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                        _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
                         _secondClutchButton.UpdateSliders();
                     }
 
@@ -432,6 +451,7 @@ namespace AdvancedInput
                     {
                         _secondClutchBitingPoint -= .01f;
                         _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                        _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
                         _secondClutchButton.UpdateSliders();
                     }
                     break;
@@ -507,6 +527,8 @@ namespace AdvancedInput
                 case WheelState.Run:
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
+
+                   
                  /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
                     if (_secondClutchButtonIndex == -1)
                     {
