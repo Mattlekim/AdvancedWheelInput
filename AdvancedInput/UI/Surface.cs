@@ -24,6 +24,9 @@ namespace AdvancedInput.UI
         public override void Draw(SpriteBatch sb)
         {
             base.Draw(sb);
+
+            if (!Active)
+                return;
             if (TextName != null)
                 sb.DrawString(Font, TextName, _currentArea.TopLeft(), TextColour, 0f, Vector2.Zero, TextScale, SpriteEffects.None, 0f);
         }

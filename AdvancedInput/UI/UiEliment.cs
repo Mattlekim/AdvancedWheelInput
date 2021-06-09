@@ -99,6 +99,9 @@ namespace AdvancedInput.UI
 
         public virtual void Draw(SpriteBatch sb)
         {
+            if (!Active)
+                return;
+
             foreach (UiEliment ui in Elements) //draw all ui elements
                 ui.Draw(sb);
         }

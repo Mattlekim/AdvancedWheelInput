@@ -135,6 +135,12 @@ namespace AdvancedInput
             LoadConfig(); //try to load the config
 
             _uiElements.Add(new SecondClutchButton(this)); //add our clutch ui button
+
+            _uiElements.Add(new Surface()
+            {
+                TextName = "Settings",
+                Active = false,
+            });
         }
 
         /// <summary>
@@ -184,7 +190,7 @@ namespace AdvancedInput
             switch (_currentState)
             {
                 case WheelState.Run:
-                    foreach (Button b in _uiElements)
+                    foreach (UiEliment b in _uiElements)
                         b.Update(dt);
                     break;
 
@@ -192,7 +198,7 @@ namespace AdvancedInput
                     switch (_configState)
                     {
                         case ConfigArea.SetDirectionInput:
-                            foreach (Button b in _uiElements)
+                            foreach (UiEliment b in _uiElements)
                                 b.Update(dt);
                             return;
                     }
@@ -239,7 +245,7 @@ namespace AdvancedInput
                     break;
 
                 case WheelState.Run:
-                    foreach (Button b in _uiElements)
+                    foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
                  /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
                     if (_secondClutchButtonIndex == -1)
