@@ -36,7 +36,9 @@ namespace AdvancedInput.UI
         /// <summary>
         /// every ui eliment can contain other ui elements
         /// </summary>
-        private List<UiEliment> Elements = new List<UiEliment>();
+        private List<UiEliment> _elements = new List<UiEliment>();
+
+        public List<UiEliment> Elements {  get { return _elements; } }
 
         //area
         protected Rectangle _currentArea;
@@ -71,7 +73,7 @@ namespace AdvancedInput.UI
         {
             if (el == null)
                 throw new Exception("Can not be null");
-            Elements.Add(el);
+            _elements.Add(el);
         }
 
         /// <summary>
@@ -93,7 +95,7 @@ namespace AdvancedInput.UI
             if (!SimpleMouse.IsLButtonDown)
                 _isLMouseDown = false; //reset the flag
             _isClicked = false; //reset is clicked flag
-            foreach (UiEliment ui in Elements)
+            foreach (UiEliment ui in _elements)
                 ui.Update(dt);
         }
 
@@ -102,7 +104,7 @@ namespace AdvancedInput.UI
             if (!Active)
                 return;
 
-            foreach (UiEliment ui in Elements) //draw all ui elements
+            foreach (UiEliment ui in _elements) //draw all ui elements
                 ui.Draw(sb);
         }
 

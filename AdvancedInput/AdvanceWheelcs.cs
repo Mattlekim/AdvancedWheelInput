@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Riddlersoft.Core.Input;
 using Riddlersoft.Core.Xml;
-
+using Riddlersoft.Core;
 using AdvancedInput.UI;
 
 namespace AdvancedInput
@@ -60,8 +60,9 @@ namespace AdvancedInput
         /// <summary>
         /// the inputs for making ajustments with the wheel
         /// </summary>
-        internal int _downInputIndex, _upInputIndex, _leftInputIndex, _rightInputIndex;
+        internal int[] _directionButtons = new int[4] { -1, -1, -1, -1 };
 
+        private CardinalDirection _inputDirection = CardinalDirection.None;
         /// <summary>
         /// the wheel input
         /// </summary>
@@ -141,11 +142,140 @@ namespace AdvancedInput
             _surfaceSettings = new Surface()
             {
                 TextName = "Settings",
+                TextColour = Color.Black,
                 Active = false,
+                PrimaryColour = Color.LightBlue * .4f,
             };
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 75, 150, 150))
+            {
+                PrimaryColour = Color.LightBlue * .8f,
+                ButtonText = "  Up Button\n\nNot Assigned",
+                TextColour = Color.DarkRed,
+                TextScale = .4f,
+                OnClick = (Button b) =>
+                {
+                    _currentState = WheelState.Config;
+                    _configState = ConfigArea.SetDirectionInput;
+                    _inputDirection = CardinalDirection.Up;
+                    _surfaceSettings.Active = false;
+                }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(275, 75, 150, 150))
+            {
+                PrimaryColour = Color.LightBlue * .8f,
+                ButtonText = "Down Button\n\nNot Assigned",
+                TextColour = Color.DarkRed,
+                TextScale = .4f,
+                OnClick = (Button b) =>
+                {
+                    _currentState = WheelState.Config;
+                    _configState = ConfigArea.SetDirectionInput;
+                    _inputDirection = CardinalDirection.Down;
+                    _surfaceSettings.Active = false;
+                }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 275, 150, 150))
+            {
+                PrimaryColour = Color.LightBlue * .8f,
+                ButtonText = "Left Button\n\nNot Assigned",
+                TextColour = Color.DarkRed,
+                TextScale = .4f,
+                OnClick = (Button b) =>
+                {
+                    _currentState = WheelState.Config;
+                    _configState = ConfigArea.SetDirectionInput;
+                    _inputDirection = CardinalDirection.Left;
+                    _surfaceSettings.Active = false;
+                }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(275, 275, 150, 150))
+            {
+                PrimaryColour = Color.LightBlue * .8f,
+                ButtonText = "Right Button\n\nNot Assigned",
+                TextColour = Color.DarkRed,
+                TextScale = .4f,
+                OnClick = (Button b) =>
+                {
+                    _currentState = WheelState.Config;
+                    _configState = ConfigArea.SetDirectionInput;
+                    _inputDirection = CardinalDirection.Right;
+                    _surfaceSettings.Active = false;
+                }
+            });
             _uiElements.Add(_surfaceSettings);
+            UpdateSuraceButtons();
         }
 
+        public void UpdateSuraceButtons()
+        {
+            foreach (UiEliment ui in _surfaceSettings.Elements)
+            {
+                Button b = ui as Button;
+                if (b!= null)
+                {
+                    if (b.ButtonText.Contains("Up"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Up] == -1)
+                        {
+                            b.ButtonText = "  Up Button\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "  Up Button";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+
+                    if (b.ButtonText.Contains("Down"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Down] == -1)
+                        {
+                            b.ButtonText = "  Down Button\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "  Down Button";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+
+                    if (b.ButtonText.Contains("Left"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Left] == -1)
+                        {
+                            b.ButtonText = "  Left Button\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "  Left Button";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+
+                    if (b.ButtonText.Contains("Right"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Right] == -1)
+                        {
+                            b.ButtonText = "  Right Button\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "  Right Button";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+                }
+            }
+
+        }
         /// <summary>
         /// load all needed content
         /// </summary>
@@ -171,6 +301,29 @@ namespace AdvancedInput
             };
 
             _uiElements.Add(_bntSettings);
+        }
+
+        public int GetInputButton()
+        {
+            JoystickCapabilities jCapabilityes;
+            JoystickState jState;
+            for (int i = 0; i < 8; i++) //loop though all joystics
+            {
+                jCapabilityes = Joystick.GetCapabilities(i); //get joystick capabilitys
+                if (jCapabilityes.IsConnected) //if is connectec
+                    if (jCapabilityes.ButtonCount > 0) //make sure it has buttons
+                    {
+                        jState = Joystick.GetState(i); //get its state
+                        for (int c = 0; c < jCapabilityes.ButtonCount; c++)
+                            if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
+                            {
+                                
+                                SaveConfig(); //save the config
+                                return i;
+                            }
+                    }
+            }
+            return -1;
         }
 
         public void Update(float dt)
@@ -203,6 +356,9 @@ namespace AdvancedInput
                 return;
             }
 
+            if (_inputWheelIndex == -1) //check to make sure we have an input device
+                return;
+
             switch (_currentState)
             {
                 case WheelState.Run:
@@ -214,15 +370,25 @@ namespace AdvancedInput
                     switch (_configState)
                     {
                         case ConfigArea.SetDirectionInput:
-                            foreach (UiEliment b in _uiElements)
-                                b.Update(dt);
+                            /*case ConfigArea.SetDirectionInput:
+                                foreach (UiEliment b in _uiElements)
+                                    b.Update(dt);
+                                return;*/
+                            int bnt = GetInputButton();
+                            if (bnt != -1) //if a button is press
+                            {
+                                _directionButtons[(int)_inputDirection] = bnt;
+                                _currentState = WheelState.Run;
+                                _surfaceSettings.Active = true;
+                                UpdateSuraceButtons();
+                                SaveConfig();
+                            }
                             return;
                     }
                     break;
             }
 
-            if (_inputWheelIndex == -1) //check to make sure we have an input device
-                return;
+            
 
             _inputWheel = Joystick.GetState(_inputWheelIndex); //get the input
 
@@ -256,7 +422,15 @@ namespace AdvancedInput
             switch (_currentState)
             {
                 case WheelState.Config:
-                    string text = "Press any button\non the wheel\nyou want to use";
+                    string text;
+                    if (_configState == ConfigArea.SetDirectionInput)
+                    {
+                        text = "   Press the button\n      on the wheel\nthat you want to use";
+                        sb.DrawString(_font, text, new Vector2(250, 250), Color.White, 0f, _font.MeasureString(text) * .5f, .9f, SpriteEffects.None, 0f);
+                        return;
+                    }
+
+                    text = "Press any button\non the wheel\nyou want to use";
                     sb.DrawString(_font, text, new Vector2(250,250), Color.White, 0f, _font.MeasureString(text)*.5f, 1f, SpriteEffects.None, 0f); 
                     break;
 
@@ -290,6 +464,7 @@ namespace AdvancedInput
                 writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex);
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
+                writer.WriteAttributeArray<int>("DirectionalButtons", _directionButtons);
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Close();
@@ -313,6 +488,9 @@ namespace AdvancedInput
                             _secondClutchButtonIndex = reader.ReadAttributeInt("SecondClutch");
                             _secondClutchBitingPoint = reader.ReadAttributeFloat("SecondClutchBite");
                             _secondClutchRelaseTime = reader.ReadAttributeFloat("SecondClutchReleaseTime");
+                            _directionButtons = reader.ReadAttributeArrayOfInt("DirectionalButtons");
+                            if (_directionButtons == null || _directionButtons.Length == 0)
+                                _directionButtons = new int[4] { -1, -1, -1, -1 };
                         }
                     }
 
