@@ -325,6 +325,9 @@ namespace AdvancedInput
 
         public bool IsWheelInputPressed(Input i)
         {
+            if (i.Index == -1)
+                return false;
+
             if (i.Type == InputType.Button)
             {
                 if (_inputWheel.Buttons != null)
@@ -435,27 +438,31 @@ namespace AdvancedInput
 
                 return;
             }
+            _inputWheel = Joystick.GetState(_inputWheelIndex.Index); //get the input
+
             switch (_currentState)
             {
                 case WheelState.Run:
                     foreach (UiEliment b in _uiElements)
                         b.Update(dt);
 
-
-                    if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Up]))
+                    if (!_secondClutchButton.LockControles)
                     {
-                        _secondClutchBitingPoint += .01f;
-                        _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
-                        _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
-                        _secondClutchButton.UpdateSliders();
-                    }
+                        if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Up]))
+                        {
+                            _secondClutchBitingPoint += .01f;
+                            _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                            _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
+                            _secondClutchButton.UpdateSliders();
+                        }
 
-                    if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Down]))
-                    {
-                        _secondClutchBitingPoint -= .01f;
-                        _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
-                        _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
-                        _secondClutchButton.UpdateSliders();
+                        if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Down]))
+                        {
+                            _secondClutchBitingPoint -= .01f;
+                            _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
+                            _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
+                            _secondClutchButton.UpdateSliders();
+                        }
                     }
                     break;
 
@@ -483,7 +490,7 @@ namespace AdvancedInput
 
             
 
-            _inputWheel = Joystick.GetState(_inputWheelIndex.Index); //get the input
+           
 
             _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
 

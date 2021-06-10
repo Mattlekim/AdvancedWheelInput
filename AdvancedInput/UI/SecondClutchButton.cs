@@ -26,6 +26,11 @@ namespace AdvancedInput.UI
         private Button _bntSaveConfig;
         private Button _bntSetInput;
 
+        public bool LockControles { get; private set; } = true;
+        /// <summary>
+        /// we need this to make sure we dont screw things up when we unlock stuff
+        /// </summary>
+        private bool _lockTillRelease = false;
         //timer for amout of fade.
         //we use this to put a display to tell the user is saved
         private float _showSaved = 0;
@@ -130,21 +135,51 @@ namespace AdvancedInput.UI
             }
 
 
-          //  if (Wheel._telemitry.IsConnected)
-                if (SimpleMouse.IsLButtonClick)
-                    for (int i = 0; i < Wheel._telemitry.TimeRecords.Count; i++)
+            //  if (Wheel._telemitry.IsConnected)
+            if (SimpleMouse.IsLButtonClick)
+                for (int i = 0; i < Wheel._telemitry.TimeRecords.Count; i++)
+                {
+                    if (new Rectangle(300, 80 + i * 20, 500, 20).Contains(SimpleMouse.Pos))
                     {
-                        if (new Rectangle(300, 80 + i * 20, 500, 20).Contains(SimpleMouse.Pos))
-                        {
-                            TimeRecord tr = Wheel._telemitry.TimeRecords[i];
-                            Wheel._secondClutchBitingPoint = tr.ClutchBitingPoint;
-                            Wheel._secondClutchRelaseTime = tr.ClutchReleaseTime;
-                            _selectedTime = i;
-                            UpdateSliders();
-                            return;
-                        }
+                        TimeRecord tr = Wheel._telemitry.TimeRecords[i];
+                        Wheel._secondClutchBitingPoint = tr.ClutchBitingPoint;
+                        Wheel._secondClutchRelaseTime = tr.ClutchReleaseTime;
+                        _selectedTime = i;
+                        UpdateSliders();
+                        return;
                     }
+                }
 
+            if (_lockTillRelease)
+            {
+                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]);
+                if (!l)
+                {
+                    _lockTillRelease = false;
+                    LockControles = false;
+                }
+                return;
+            }
+
+            if (LockControles)
+            {
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) && Wheel.IsWheelInputPressed(Wheel._secondClutchButtonIndex))
+                {
+                    
+                    _lockTillRelease = true;
+                    _timeTillLock = 60;
+                }
+            }
+            else
+            {
+                _timeTillLock -= dt;
+                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]);
+                if (l)
+                    _timeTillLock = 60;
+                
+                if (_timeTillLock <= 0)
+                    LockControles = true;
+            }
 
         }
 
@@ -163,6 +198,7 @@ namespace AdvancedInput.UI
 
         }
 
+        float _timeTillLock = 0;
         public override void Draw(SpriteBatch sb)
         {
             if (!_active)
@@ -191,8 +227,18 @@ namespace AdvancedInput.UI
                 return;
             }
 
+            if (LockControles)
+            {
+                sb.DrawString(Font, "Settings Are Locked", new Vector2(25, 310), Color.Orange, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, "Press Up and Clutch Button\n At Same Time To Release", new Vector2(45, 340), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+            }
+            else
+            {
+                sb.DrawString(Font, $"Settings Will Lock In {(int)_timeTillLock}s", new Vector2(15, 310), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Of Inativity", new Vector2(95, 340), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
+            }
 
-            sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
+                sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
             base.Draw(sb);
 
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
