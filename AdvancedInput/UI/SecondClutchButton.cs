@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using Riddlersoft.Core;
 
@@ -37,6 +38,8 @@ namespace AdvancedInput.UI
         private float _showSaved = 0;
 
         private int _sliderToChange = 0;
+
+        private SoundEffect _changeBite, _changeRelease;
 
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
@@ -183,9 +186,14 @@ namespace AdvancedInput.UI
                 if (_timeTillLock <= 0)
                     LockControles = true;
 
-                if (!LockControles)
-                {
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]))
+                    _sliderToChange--;
 
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]))
+                    _sliderToChange++;
+                _sliderToChange = MathHelper.Clamp(_sliderToChange,0,1);
+                if (_sliderToChange == 0)
+                {
                     if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
                     {
                         Wheel._secondClutchBitingPoint += .01f;
@@ -200,6 +208,30 @@ namespace AdvancedInput.UI
                         Wheel._secondClutchBitingPoint = MathHelper.Clamp(Wheel._secondClutchBitingPoint, 0, 1);
                         Wheel._secondClutchBitingPoint = (float)Math.Round(Wheel._secondClutchBitingPoint, 2);
                         UpdateSliders();
+                    }
+                }
+                if (_sliderToChange == 1)
+                {
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
+                    {
+                        _slReleaseTime.Current += 0.01f;
+                        _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);
+                        Wheel._secondClutchRelaseTime = 1f / _slReleaseTime.GetValue();
+                        // Wheel._secondClutchRelaseTime += .01f;
+                        //  Wheel._secondClutchRelaseTime = MathHelper.Clamp(Wheel._secondClutchRelaseTime, 0, 1);
+                        //  Wheel._secondClutchRelaseTime = (float)Math.Round(Wheel._secondClutchRelaseTime, 2);
+                        // UpdateSliders();
+                    }
+
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]))
+                    {
+                        _slReleaseTime.Current -= 0.01f;
+                        _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);
+                        Wheel._secondClutchRelaseTime = 1f / _slReleaseTime.GetValue();
+                        //  Wheel._secondClutchRelaseTime -= .01f;
+                        //  Wheel._secondClutchRelaseTime = MathHelper.Clamp(Wheel._secondClutchRelaseTime, 0, 1);
+                        //  Wheel._secondClutchRelaseTime = (float)Math.Round(Wheel._secondClutchRelaseTime, 2);
+                        //  UpdateSliders();
                     }
                 }
             }

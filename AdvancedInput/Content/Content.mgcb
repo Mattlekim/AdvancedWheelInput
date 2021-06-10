@@ -32,3 +32,15 @@
 /processorParam:TextureFormat=Color
 /build:Imgs/config.png
 
+#begin OptionSelect.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:OptionSelect.wav
+
+#begin ui_fail_01.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:ui_fail_01.wav
+
