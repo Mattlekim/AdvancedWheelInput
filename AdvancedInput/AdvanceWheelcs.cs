@@ -446,24 +446,7 @@ namespace AdvancedInput
                     foreach (UiEliment b in _uiElements)
                         b.Update(dt);
 
-                    if (!_secondClutchButton.LockControles)
-                    {
-                        if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Up]))
-                        {
-                            _secondClutchBitingPoint += .01f;
-                            _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
-                            _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
-                            _secondClutchButton.UpdateSliders();
-                        }
-
-                        if (IsWheelInputPressed(_directionButtons[(int)CardinalDirection.Down]))
-                        {
-                            _secondClutchBitingPoint -= .01f;
-                            _secondClutchBitingPoint = MathHelper.Clamp(_secondClutchBitingPoint, 0, 1);
-                            _secondClutchBitingPoint = (float)Math.Round(_secondClutchBitingPoint, 2);
-                            _secondClutchButton.UpdateSliders();
-                        }
-                    }
+                 
                     break;
 
                 case WheelState.Config:

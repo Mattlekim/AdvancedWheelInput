@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Riddlersoft.Core;
 
 namespace AdvancedInput.UI
 {
@@ -35,6 +36,7 @@ namespace AdvancedInput.UI
         //we use this to put a display to tell the user is saved
         private float _showSaved = 0;
 
+        private int _sliderToChange = 0;
 
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
@@ -102,6 +104,7 @@ namespace AdvancedInput.UI
         float _flasher;
 
         int _selectedTime = -1;
+
         public override void Update(float dt)
         {
             if (!_active)
@@ -179,6 +182,26 @@ namespace AdvancedInput.UI
                 
                 if (_timeTillLock <= 0)
                     LockControles = true;
+
+                if (!LockControles)
+                {
+
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
+                    {
+                        Wheel._secondClutchBitingPoint += .01f;
+                        Wheel._secondClutchBitingPoint = MathHelper.Clamp(Wheel._secondClutchBitingPoint, 0, 1);
+                        Wheel._secondClutchBitingPoint = (float)Math.Round(Wheel._secondClutchBitingPoint, 2);
+                        UpdateSliders();
+                    }
+
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]))
+                    {
+                        Wheel._secondClutchBitingPoint -= .01f;
+                        Wheel._secondClutchBitingPoint = MathHelper.Clamp(Wheel._secondClutchBitingPoint, 0, 1);
+                        Wheel._secondClutchBitingPoint = (float)Math.Round(Wheel._secondClutchBitingPoint, 2);
+                        UpdateSliders();
+                    }
+                }
             }
 
         }
