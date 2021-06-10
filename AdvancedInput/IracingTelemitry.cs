@@ -32,8 +32,6 @@ namespace AdvancedInput
         {
             iRacing.NewData += iRacing_NewData;
             iRacing.StartListening();
-            CurrentCar = "Maxda";
-            _0to60Time = 6.2f;
             OnConnected += OnCollect;
         }
 
@@ -199,12 +197,12 @@ namespace AdvancedInput
             tmp = tmp.Replace(" ", "");
             path = $"{Dir}\\{tmp}.tel";
             //path = $"{tmp}.tel";
-
+            TimeRecords.Clear();
 
             if (File.Exists(path))
             {
 
-                TimeRecords.Clear();
+                
 
                 try
                 {

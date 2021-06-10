@@ -130,7 +130,7 @@ namespace AdvancedInput.UI
             }
 
 
-            if (Wheel._telemitry.IsConnected)
+          //  if (Wheel._telemitry.IsConnected)
                 if (SimpleMouse.IsLButtonClick)
                     for (int i = 0; i < Wheel._telemitry.TimeRecords.Count; i++)
                     {
@@ -195,11 +195,13 @@ namespace AdvancedInput.UI
             sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
             base.Draw(sb);
 
-            if (Wheel._telemitry.IsConnected)
+            if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
             {
                 sb.Draw(Dot, new Rectangle(300, 0, 500, 50), Color.LightBlue * .5f);
-
-                sb.DrawString(Font, $"Connected {Wheel._telemitry.CurrentCar}", new Vector2(350, 10), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                string cont = "Connected";
+                if (!Wheel._telemitry.IsConnected)
+                    cont = "Not Connected!";
+                sb.DrawString(Font, $"{cont} {Wheel._telemitry.CurrentCar}", new Vector2(350, 10), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
 
                 sb.Draw(Dot, new Rectangle(300, 50, 500, 25), Color.LightBlue * .8f);
 
