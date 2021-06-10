@@ -63,7 +63,6 @@ namespace AdvancedInput
         private int _playerCar = -1;
         void iRacing_NewData(DataSample data)
         {
-            
             if (data.Telemetry.CarDetails.Length > 1)
                 CurrentCar = data.Telemetry.CarDetails[1].Driver.CarScreenName;
             else
