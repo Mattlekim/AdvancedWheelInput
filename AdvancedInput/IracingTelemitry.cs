@@ -32,7 +32,7 @@ namespace AdvancedInput
         {
             iRacing.NewData += iRacing_NewData;
             iRacing.StartListening();
-            OnConnected += OnCollect;
+            OnConnected += OnConnect;
         }
 
         public void AddTimeRecord0To60()
@@ -59,18 +59,31 @@ namespace AdvancedInput
             _wheel = wheel;
             //AddTimeRecord0To60();
         }
+
+        private int _playerCar = -1;
         void iRacing_NewData(DataSample data)
         {
-            CurrentCar = data.Telemetry.CarDetails[0].Driver.CarScreenName;
+            
+            if (data.Telemetry.CarDetails.Length > 1)
+                CurrentCar = data.Telemetry.CarDetails[1].Driver.CarScreenName;
+            else
+                CurrentCar = data.Telemetry.CarDetails[0].Driver.CarScreenName;
+
             SpeedMph = data.Telemetry.Speed * 2.25f;
             if (!IsConnected)
+            {
+                
+                
+
+                
                 if (OnConnected != null)
                     OnConnected();
+            }
             _timeSinceGotData = 5f;
             IsConnected = true;
         }
 
-        public void OnCollect()
+        public void OnConnect()
         {
             LoadTelimtory();
         }
@@ -164,7 +177,7 @@ namespace AdvancedInput
             {
                 CustomXmlWriter writer = CustomXmlWriter.Create(fs);
                 writer.WriteStartDocument();
-                writer.WriteStartElement(tmp);
+                writer.WriteStartElement("Car");
 
                 foreach (TimeRecord tr in TimeRecords)
                     if (tr.WasClutchStart)
