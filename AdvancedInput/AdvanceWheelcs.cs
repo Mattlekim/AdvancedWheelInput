@@ -44,7 +44,7 @@ namespace AdvancedInput
         /// <summary>
         /// this is how much the clutch is depressed
         /// </summary>
-        private float _secondClutchDepressedAmount;
+        internal float _secondClutchDepressedAmount;
 
         /// <summary>
         /// the speed that the clutch releases in seconds

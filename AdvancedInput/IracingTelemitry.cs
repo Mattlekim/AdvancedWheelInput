@@ -128,10 +128,8 @@ namespace AdvancedInput
                 {
                     _0to60Time = 0;
                     _log0to60 = true;
-                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
-                    {
+                    if (_wheel._secondClutchDepressedAmount > 0)
                         _usedSecondClutch = true;
-                    }
                     else
                         _usedSecondClutch = false;
                 }
@@ -141,9 +139,10 @@ namespace AdvancedInput
             {
                 _0to60Time = 0;
                 _log0to60 = true;
-                if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
+                if (_wheel._secondClutchDepressedAmount > 0)
                     _usedSecondClutch = true;
-                
+                else
+                    _usedSecondClutch = false;
             }
 
         }

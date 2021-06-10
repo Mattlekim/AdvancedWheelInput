@@ -236,7 +236,7 @@ namespace AdvancedInput.UI
                     if (!tr.WasClutchStart)
                         sb.DrawString(Font, $"*", new Vector2(310, 85 + 20 * i), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                     sb.DrawString(Font, $"{Math.Round(tr.ZeroToSixty, 2)} sec", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                    sb.DrawString(Font, $"{Math.Round(tr.ClutchReleaseTime, 2)} ", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(1 / tr.ClutchReleaseTime, 2)} ", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                     sb.DrawString(Font, $"{Math.Round(tr.ZeroToOnehundrand, 2)} sec", new Vector2(430, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                     sb.DrawString(Font, $"{Math.Round(tr.ClutchBitingPoint, 2)}", new Vector2(530, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                 }
