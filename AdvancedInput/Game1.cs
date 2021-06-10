@@ -23,7 +23,7 @@ namespace AdvancedInput
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             //set resolution
-            this.graphics.PreferredBackBufferWidth = 500;
+            this.graphics.PreferredBackBufferWidth = 800;
             this.graphics.PreferredBackBufferHeight = 500;
             this.IsMouseVisible = true; //make sure the mouse is visible
         }
@@ -56,6 +56,9 @@ namespace AdvancedInput
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Wheel = new AdvanceWheel(this);
             Wheel.LoadContent(Content);
+
+            IRacingTelemitry irt = Components[2] as IRacingTelemitry;
+            irt.SetWheel(Wheel);
             // TODO: use this.Content to load your game content here
         }
 

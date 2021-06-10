@@ -31,12 +31,12 @@ namespace AdvancedInput.UI
         private float _showSaved = 0;
 
 
-        public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0,0,500,400))
+        public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
             //some basic formatting
             PrimaryColour = Color.Red * .3f;
             SecondryColour = Color.OrangeRed * .5f;
-            
+
             //----------------CREATE UI ELEMENTS---------------------------
             _slBitingPoint = new UI.Slider(new Rectangle(50, 80, 50, 200), 1, 0, .8f)
             {
@@ -66,7 +66,7 @@ namespace AdvancedInput.UI
                 SecondryColour = Color.OrangeRed,
                 ButtonText = "Set Input\nIn Iracing",
                 TextScale = .3f,
-                
+
                 OnClick = (Button b) =>
                 {
                     wheel.DepressSecondClutch(true);
@@ -96,6 +96,7 @@ namespace AdvancedInput.UI
 
         float _flasher;
 
+        int _selectedTime = -1;
         public override void Update(float dt)
         {
             if (!_active)
@@ -103,7 +104,7 @@ namespace AdvancedInput.UI
             //showing save display
             _showSaved -= dt;
             _showSaved = MathHelper.Clamp(_showSaved, 0, 1);
-           
+
             base.Update(dt); //base update for all ui elements
 
             _flasher += dt * 2; //flasher to display text to flas
@@ -116,7 +117,7 @@ namespace AdvancedInput.UI
 
             if (_detectSecondClutchInput) //if we are waiting to detect a button press for clutch
             {
-                for (int i =0; i < Wheel._inputWheel.Buttons.Length; i++) //check all buttons on wheel
+                for (int i = 0; i < Wheel._inputWheel.Buttons.Length; i++) //check all buttons on wheel
                 {
                     if (Wheel._inputWheel.Buttons[i] == Microsoft.Xna.Framework.Input.ButtonState.Pressed) //look for press
                     {
@@ -128,9 +129,24 @@ namespace AdvancedInput.UI
                 }
             }
 
-          
 
-        }       
+            if (Wheel._telemitry.IsConnected)
+                if (SimpleMouse.IsLButtonClick)
+                    for (int i = 0; i < Wheel._telemitry.TimeRecords.Count; i++)
+                    {
+                        if (new Rectangle(300, 80 + i * 20, 500, 20).Contains(SimpleMouse.Pos))
+                        {
+                            TimeRecord tr = Wheel._telemitry.TimeRecords[i];
+                            Wheel._secondClutchBitingPoint = tr.ClutchBitingPoint;
+                            Wheel._secondClutchRelaseTime = tr.ClutchReleaseTime;
+                            _selectedTime = i;
+                            UpdateSliders();
+                            return;
+                        }
+                    }
+
+
+        }
 
         public void UpdateSliders()
         {
@@ -144,7 +160,7 @@ namespace AdvancedInput.UI
                 return;
             if (Wheel._secondClutchButtonIndex == -1)
                 _detectSecondClutchInput = true;
-           
+
         }
 
         public override void Draw(SpriteBatch sb)
@@ -176,19 +192,58 @@ namespace AdvancedInput.UI
             }
 
 
-            sb.DrawString(Wheel._font, "Clutch", new Vector2(10, 10), Color.White);
+            sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
             base.Draw(sb);
 
             if (Wheel._telemitry.IsConnected)
             {
-                sb.Draw(Dot, new Rectangle(300, 0, 200, 400), Color.Black * .5f);
-                sb.DrawString(Font, "Connected", new Vector2(330, 20), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"Mph {Math.Round(Wheel._telemitry.SpeedMph,1)}", new Vector2(330, 60), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                for (int i = 0; i < Wheel._telemitry.ZeroToSixty.Count; i++)
-                    sb.DrawString(Font, $"{Wheel._telemitry.ZeroToSixty[i]}", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.Draw(Dot, new Rectangle(300, 0, 500, 50), Color.LightBlue * .5f);
 
+                sb.DrawString(Font, $"Connected {Wheel._telemitry.CurrentCar}", new Vector2(350, 10), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+
+                sb.Draw(Dot, new Rectangle(300, 50, 500, 25), Color.LightBlue * .8f);
+
+                sb.DrawString(Font, $"0 to 60", new Vector2(330, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"0 - 100 ", new Vector2(430, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Biting Point", new Vector2(530, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Release Time", new Vector2(630, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+
+
+                Color col = Color.LightBlue;
+                float fade = .5f;
+                for (int i = 0; i < Wheel._telemitry.TimeRecords.Count; i++)
+                {
+                    if (i % 2 == 0)
+                        fade = .25f;
+                    else
+                        fade = .5f;
+
+                    if (_selectedTime == i)
+                    {
+                        col = Color.Red;
+                        fade = .5f;
+                    }
+                    else
+                    {
+                        col = Color.LightBlue;
+
+                    }
+
+                    sb.Draw(Dot, new Rectangle(300, 80 + i * 20, 500, 20), col * (.8f * fade));
+                    TimeRecord tr = Wheel._telemitry.TimeRecords[i];
+                    if (!tr.WasClutchStart)
+                        sb.DrawString(Font, $"*", new Vector2(310, 85 + 20 * i), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToSixty, 2)} sec", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ClutchReleaseTime, 2)} ", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToOnehundrand, 2)} sec", new Vector2(430, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ClutchBitingPoint, 2)}", new Vector2(530, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                }
             }
+
         }
+
+
+
 
         public override void OnLButtonDown(Vector2 pos)
         {

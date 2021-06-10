@@ -308,7 +308,7 @@ namespace AdvancedInput
 
             UiEliment.LoadContent(_dot, _font); //load ui element content
 
-            _bntSettings = new Button(this, new Rectangle(420, 420, 80, 80))
+            _bntSettings = new Button(this, new Rectangle(220, 420, 80, 80))
             {
                 Icon = _iconConfig,
                 PrimaryColour = Color.LightBlue * 0,
@@ -430,8 +430,11 @@ namespace AdvancedInput
             }
 
             if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
-                return;
+            {
 
+
+                return;
+            }
             switch (_currentState)
             {
                 case WheelState.Run:
@@ -525,7 +528,14 @@ namespace AdvancedInput
                     break;
 
                 case WheelState.Run:
-                    foreach (UiEliment b in _uiElements)
+
+                    if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
+                    {
+                        sb.DrawString(_font, "Input device cannot be found", new Vector2(400, 250), Color.White, 0f, _font.MeasureString("Input device cannot be found") * .5f, 1f, SpriteEffects.None, 0f);
+                        return;
+                    }
+
+                        foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
                    

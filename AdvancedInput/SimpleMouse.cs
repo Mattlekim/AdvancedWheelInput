@@ -23,8 +23,10 @@ namespace AdvancedInput
         public static Action<Vector2> OnLeftClick;
         public static Action<Vector2> OnLeftDown;
 
+        public static Vector2 Pos { get { return new Vector2(_MouseState.X, _MouseState.Y); } }
         public static bool IsLButtonDown { get { return _MouseState.LeftButton == ButtonState.Pressed; } }
 
+        public static bool IsLButtonClick { get { return _MouseState.LeftButton == ButtonState.Pressed && _LMouseState.LeftButton == ButtonState.Released; } }
         public static void Reset()
         {
             _LMouseState = _MouseState;

@@ -21,6 +21,11 @@ namespace AdvancedInput.UI
         {
         }
 
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+        }
+
         public override void Draw(SpriteBatch sb)
         {
 

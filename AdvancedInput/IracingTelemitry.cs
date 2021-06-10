@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
 using iRacingSDK;
+using Riddlersoft.Core.Xml;
 
 namespace AdvancedInput
 {
@@ -18,20 +20,44 @@ namespace AdvancedInput
         public bool IsConnected { get; private set; } = false;
         private float _timeSinceGotData = 5f;
 
-        public List<float> ZeroToSixty { get; private set; } = new List<float>();
 
+        public string CurrentCar { get; private set; }
+
+        public List<TimeRecord> TimeRecords = new List<TimeRecord>();
         public Action OnConnected;
         public Action OnDisconected;
+
+        private AdvanceWheel _wheel;
         public IRacingTelemitry(Game game) : base(game)
         {
             iRacing.NewData += iRacing_NewData;
             iRacing.StartListening();
-            
+            CurrentCar = "Maxda";
+            _0to60Time = 6.2f;
+            OnConnected += OnCollect;
         }
 
+        public void AddTimeRecord0To60()
+        {
+            if (CurrentCar == null || CurrentCar == string.Empty)
+                return;
+
+
+            TimeRecords.Add(new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime)
+            {
+                WasClutchStart = _usedSecondClutch,
+            });
+
+            SaveTelimtory();
+        }
+        public void SetWheel(AdvanceWheel wheel)
+        {
+            _wheel = wheel;
+            //AddTimeRecord0To60();
+        }
         void iRacing_NewData(DataSample data)
         {
-            
+            CurrentCar = data.Telemetry.CarDetails[0].Driver.CarScreenName;
             SpeedMph = data.Telemetry.Speed * 2.25f;
             if (!IsConnected)
                 if (OnConnected != null)
@@ -40,7 +66,10 @@ namespace AdvancedInput
             IsConnected = true;
         }
 
-
+        public void OnCollect()
+        {
+            LoadTelimtory();
+        }
         public override void Initialize()
         {
             base.Initialize();
@@ -48,6 +77,7 @@ namespace AdvancedInput
 
         private bool _log0to60 = false;
         private float _0to60Time = 0;
+        public bool _usedSecondClutch = false;
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -68,18 +98,22 @@ namespace AdvancedInput
             {
                 if (SpeedMph > 0.02f)
                 {
-
-
                     if (SpeedMph >= 60)
                     {
                         _log0to60 = false;
-                        ZeroToSixty.Add(_0to60Time);
+                        AddTimeRecord0To60();
                     }
                 }
                 else
                 {
                     _0to60Time = 0;
                     _log0to60 = true;
+                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
+                    {
+                        _usedSecondClutch = true;
+                    }
+                    else
+                        _usedSecondClutch = false;
                 }
             }
             else
@@ -87,8 +121,96 @@ namespace AdvancedInput
             {
                 _0to60Time = 0;
                 _log0to60 = true;
+                if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
+                    _usedSecondClutch = true;
+                
             }
 
         }
+
+        public string path;
+        public void SaveTelimtory()
+        {
+            if (!Directory.Exists($"{Dir}"))
+                Directory.CreateDirectory($"{Dir}");
+
+            if (TimeRecords == null || TimeRecords.Count <= 0)
+                return;
+
+
+            string tmp = CurrentCar.Replace("-", "");
+            tmp = tmp.Replace(" ", "");
+            path  = $"{Dir}\\{tmp}.tel";
+            using (FileStream fs = File.Create(path))
+            {
+                CustomXmlWriter writer = CustomXmlWriter.Create(fs);
+                writer.WriteStartDocument();
+                writer.WriteStartElement(tmp);
+
+                foreach (TimeRecord tr in TimeRecords)
+                    if (tr.WasClutchStart)
+                    {
+                        writer.WriteStartElement("Time");
+
+                        writer.WriteAttributeFloat("ztosix", tr.ZeroToSixty);
+                        writer.WriteAttributeFloat("ztoone", tr.ZeroToOnehundrand);
+                        writer.WriteAttributeFloat("Biting", tr.ClutchBitingPoint);
+                        writer.WriteAttributeFloat("Release", tr.ClutchReleaseTime);
+
+                        writer.WriteEndElement();
+                    }
+
+
+
+                writer.WriteEndElement();
+                writer.WriteEndDocument();
+                writer.Close();
+            }
+
+        }
+
+        private const string Dir = "Tel";
+        public void LoadTelimtory()
+        {
+            
+            string tmp = CurrentCar.Replace("-", "");
+            tmp = tmp.Replace(" ", "");
+            path = $"{Dir}\\{tmp}.tel";
+            //path = $"{tmp}.tel";
+
+
+            if (File.Exists(path))
+            {
+
+                TimeRecords.Clear();
+
+                try
+                {
+                    using (FileStream fs = File.OpenRead(path))
+                    {
+                        CustomXmlReader reader = CustomXmlReader.Create(fs);
+
+                        while (reader.Read())
+                        {
+                            if (reader.Name == "Time")
+                            {
+                                TimeRecords.Add(new TimeRecord()
+                                {
+                                    ClutchBitingPoint = reader.ReadAttributeFloat("Biting"),
+                                    ClutchReleaseTime = reader.ReadAttributeFloat("Release"),
+                                    ZeroToSixty = reader.ReadAttributeFloat("ztosix"),
+                                    ZeroToOnehundrand = reader.ReadAttributeFloat("ztoone"),
+                                    WasClutchStart = true
+                                }); ;
+                            }
+                        }
+
+                        reader.Close();
+                    }
+                }
+                catch { }
+            }
+        }
+
     }
 }
