@@ -39,7 +39,7 @@ namespace AdvancedInput.UI
 
         private int _sliderToChange = 0;
 
-        private SoundEffect _changeBite, _changeRelease;
+       
 
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
@@ -108,15 +108,25 @@ namespace AdvancedInput.UI
 
         int _selectedTime = -1;
 
+
+        private bool _haveLoadedContent = false;
         public override void Update(float dt)
         {
+            base.Update(dt); //base update for all ui elements
+
             if (!_active)
                 return;
+
+            if (!_haveLoadedContent)
+            {
+               
+                _haveLoadedContent = true;
+            }
             //showing save display
             _showSaved -= dt;
             _showSaved = MathHelper.Clamp(_showSaved, 0, 1);
 
-            base.Update(dt); //base update for all ui elements
+       
 
             _flasher += dt * 2; //flasher to display text to flas
             if (_flasher > 1)
@@ -196,9 +206,11 @@ namespace AdvancedInput.UI
                 {
                     if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
                     {
+                        
                         Wheel._secondClutchBitingPoint += .01f;
                         Wheel._secondClutchBitingPoint = MathHelper.Clamp(Wheel._secondClutchBitingPoint, 0, 1);
                         Wheel._secondClutchBitingPoint = (float)Math.Round(Wheel._secondClutchBitingPoint, 2);
+                        
                         UpdateSliders();
                     }
 
