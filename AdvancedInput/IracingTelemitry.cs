@@ -50,6 +50,12 @@ namespace AdvancedInput
 
             SaveTelimtory();
         }
+
+        public void AddTimeRecord0To100()
+        {
+            TimeRecords[TimeRecords.Count - 1].ZeroToOnehundrand = _0to60Time;
+            SaveTelimtory();
+        }
         public void SetWheel(AdvanceWheel wheel)
         {
             _wheel = wheel;
@@ -76,6 +82,7 @@ namespace AdvancedInput
         }
 
         private bool _log0to60 = false;
+        private bool _log0to100 = false;
         private float _0to60Time = 0;
         public bool _usedSecondClutch = false;
         public override void Update(GameTime gameTime)
@@ -94,6 +101,20 @@ namespace AdvancedInput
                 }
 
             _0to60Time += dt;
+
+            if (_log0to100)
+            {
+                if (SpeedMph >= 100)
+                {
+                    AddTimeRecord0To100();
+                    _log0to100 = false;
+                }
+                else
+                    if (SpeedMph < 60)
+                        _log0to100 = false;
+                return;
+            }
+
             if (_log0to60)
             {
                 if (SpeedMph > 0.02f)
@@ -101,6 +122,7 @@ namespace AdvancedInput
                     if (SpeedMph >= 60)
                     {
                         _log0to60 = false;
+                        _log0to100 = true;
                         AddTimeRecord0To60();
                     }
                 }
