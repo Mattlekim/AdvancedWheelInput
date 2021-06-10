@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace AdvancedInput.UI
 {
@@ -90,15 +90,17 @@ namespace AdvancedInput.UI
             _elements.Add(el);
         }
 
+        internal static ContentManager Content;
         /// <summary>
         /// load the content
         /// </summary>
         /// <param name="dot">load in the 1x1 white texture</param>
         /// <param name="font">the font to use</param>
-        public static void LoadContent(Texture2D dot, SpriteFont font)
+        public static void LoadContent(Texture2D dot, SpriteFont font, ContentManager content)
         {
             Dot = dot;
             Font = font;
+            Content = content;
         }
 
         public virtual void Update(float dt)

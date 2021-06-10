@@ -306,7 +306,7 @@ namespace AdvancedInput
             _dot = new Texture2D(_game.GraphicsDevice, 1, 1); //create 1x1 dot
             _dot.SetData<Color>(new Color[1] { Color.White }); //set color of dot to white
 
-            UiEliment.LoadContent(_dot, _font); //load ui element content
+            UiEliment.LoadContent(_dot, _font, content); //load ui element content
 
             _bntSettings = new Button(this, new Rectangle(220, 420, 80, 80))
             {
