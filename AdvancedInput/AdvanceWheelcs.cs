@@ -330,7 +330,7 @@ namespace AdvancedInput
 
             UiEliment.LoadContent(_dot, _font, content); //load ui element content
 
-            _bntSettings = new Button(this, new Rectangle(220, 420, 80, 80))
+            _bntSettings = new Button(this, new Rectangle(220, 410, 80, 80))
             {
                 Icon = _iconConfig,
                 PrimaryColour = Color.LightBlue * 0,
