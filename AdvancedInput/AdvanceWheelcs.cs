@@ -334,6 +334,7 @@ namespace AdvancedInput
             {
                 Icon = _iconConfig,
                 PrimaryColour = Color.LightBlue * 0,
+                SecondryColour = Color.LightBlue,
                 OnClick = (Button ui) =>
                 {
                     _surfaceSettings.Activate();
