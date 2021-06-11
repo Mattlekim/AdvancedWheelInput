@@ -33,6 +33,11 @@ namespace AdvancedInput
         /// </summary>
         const int MaxAxisValue = CenterAxisValue * 2;
 
+        /// <summary>
+        /// weahter to use the new release methord or not
+        /// </summary>
+        internal bool _useNewReleaseMethord = true;
+
         //the current state of the wheel
         private WheelState _currentState = WheelState.Config; //set to config by default
         //the type of config state
@@ -83,6 +88,7 @@ namespace AdvancedInput
         /// </summary>
         private VirtualJoystick _virtualJoyStick;
 
+        
         /// <summary>
         /// the font for displaying text
         /// </summary>

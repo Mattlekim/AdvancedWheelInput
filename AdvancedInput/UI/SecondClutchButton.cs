@@ -39,14 +39,14 @@ namespace AdvancedInput.UI
 
         private int _sliderToChange = 0;
 
-       
+        private Button _bntSlowRelease, _bntFastRelease;
 
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
             //some basic formatting
             PrimaryColour = Color.LightBlue * .3f;
             SecondryColour = Color.OrangeRed * .5f;
-
+            HaveMouseOver = false;
             //----------------CREATE UI ELEMENTS---------------------------
             _slBitingPoint = new UI.Slider(new Rectangle(50, 80, 50, 200), 1, 0, .8f)
             {
@@ -59,6 +59,8 @@ namespace AdvancedInput.UI
                 },
             };
 
+
+            
             _slReleaseTime = new UI.Slider(new Rectangle(150, 80, 50, 200), 3, 0, .5f)
             {
                 TextName = "Release Time\n(Seconds)",
@@ -70,13 +72,49 @@ namespace AdvancedInput.UI
                 },
             };
 
+            if (Wheel._useNewReleaseMethord)
+            {
+                _slReleaseTime.Deactive();
+                _slReleaseTime.Locked = true;
+
+                _bntSlowRelease = new Button(wheel, new Rectangle(125, 80, 70, 70))
+                {
+                    PrimaryColour = Color.LightBlue * .5f,
+                    ButtonText = "  Slow\nRelease",
+                    TextScale = .3f,
+                    Sticky = true,
+                    TextShadow = true,
+                    OnClick = (Button b)=>
+                    {
+                        _bntFastRelease.ResetButtonState();
+                    }
+                };
+
+                _bntFastRelease = new Button(wheel, new Rectangle(125, 210, 70, 70))
+                {
+                    PrimaryColour = Color.LightBlue * .5f,
+                    ButtonText = "  Quick\nRelease",
+                    TextScale = .3f,
+                    Sticky = true,
+                    TextShadow = true,
+                    OnClick = (Button b) =>
+                    {
+                        _bntSlowRelease.ResetButtonState();
+                    }
+                }; 
+
+                AddElement(_bntSlowRelease);
+                AddElement(_bntFastRelease);
+            }
+
+
             _bntSetInput = new UI.Button(wheel, new Rectangle(210, 80, 80, 80))
             {
                 PrimaryColour = Color.Green,
                 SecondryColour = Color.OrangeRed,
                 ButtonText = "Set Input\nIn Iracing",
                 TextScale = .3f,
-
+                TextShadow = true,
                 OnClick = (Button b) =>
                 {
                     wheel.DepressSecondClutch(true);
@@ -89,6 +127,7 @@ namespace AdvancedInput.UI
                 SecondryColour = Color.OrangeRed,
                 ButtonText = "Save",
                 TextScale = .4f,
+                TextShadow = true,
                 OnClick = (Button b) =>
                 {
                     wheel.SaveConfig();

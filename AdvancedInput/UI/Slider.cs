@@ -34,6 +34,9 @@ namespace AdvancedInput.UI
         {
             base.Draw(sb);
 
+            if (!_active)
+                return;
+
             sb.Draw(Dot, _currentArea, SecondryColour * Visiblity);
 
             Rectangle secondArea = _currentArea.Shrink(2);

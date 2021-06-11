@@ -34,6 +34,10 @@ namespace AdvancedInput.UI
         public Color TextColour = Color.White;
 
         /// <summary>
+        /// if this element is permantly locked or not
+        /// </summary>
+        public bool Locked;
+        /// <summary>
         /// every ui eliment can contain other ui elements
         /// </summary>
         private List<UiEliment> _elements = new List<UiEliment>();
@@ -55,6 +59,9 @@ namespace AdvancedInput.UI
         private bool _activateNextUpdate = false;
         public void Activate()
         {
+            if (Locked)
+                return;
+
             _activateNextUpdate = true;
             foreach (UiEliment ui in Elements)
                 ui.Activate();
@@ -62,6 +69,9 @@ namespace AdvancedInput.UI
 
         public void Deactive()
         {
+            if (Locked)
+                return;
+
             _active = false;
             foreach (UiEliment ui in Elements)
                 ui.Deactive();
