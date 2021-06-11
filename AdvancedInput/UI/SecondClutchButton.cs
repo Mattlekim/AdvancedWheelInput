@@ -44,7 +44,7 @@ namespace AdvancedInput.UI
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
             //some basic formatting
-            PrimaryColour = Color.Red * .3f;
+            PrimaryColour = Color.LightBlue * .3f;
             SecondryColour = Color.OrangeRed * .5f;
 
             //----------------CREATE UI ELEMENTS---------------------------

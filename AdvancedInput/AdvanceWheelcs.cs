@@ -103,6 +103,7 @@ namespace AdvancedInput
         private List<UiEliment> _uiElements = new List<UiEliment>();
 
         private bool _VJoyConnected = false;
+
         /// <summary>
         /// depress the second clutch
         /// </summary>
@@ -117,9 +118,23 @@ namespace AdvancedInput
         }
 
 
+        /// <summary>
+        /// a surface that contains the settings
+        /// </summary>
         Surface _surfaceSettings;
+
+        /// <summary>
+        /// button for the second clutch 
+        /// </summary>
         SecondClutchButton _secondClutchButton;
+
+        /// <summary>
+        /// button for the setttings
+        /// </summary>
         Button _bntSettings;
+        /// <summary>
+        /// used for loging 0 to 60
+        /// </summary>
         internal IRacingTelemitry _telemitry;
         public AdvanceWheel(Game game)
         {
