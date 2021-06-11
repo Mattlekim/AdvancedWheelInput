@@ -42,6 +42,21 @@ namespace AdvancedInput
             if (CurrentCar == null || CurrentCar == string.Empty)
                 return;
 
+            if (TimeRecords.Count >= 21)
+            {
+                float lowert = float.MinValue;
+                int index = -1;
+
+                for (int i =0; i < TimeRecords.Count; i++)
+                    if (TimeRecords[i].ZeroToSixty > lowert)
+                    {
+                        index = i;
+                        lowert = TimeRecords[i].ZeroToSixty;
+                    }
+
+                if (index != -1)
+                    TimeRecords.RemoveAt(index);
+            }
 
             TimeRecords.Add(new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime)
             {

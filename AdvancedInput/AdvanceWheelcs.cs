@@ -102,7 +102,7 @@ namespace AdvancedInput
         /// </summary>
         private List<UiEliment> _uiElements = new List<UiEliment>();
 
-
+        private bool _VJoyConnected = false;
         /// <summary>
         /// depress the second clutch
         /// </summary>
@@ -128,12 +128,13 @@ namespace AdvancedInput
             _virtualJoyStick = new VirtualJoystick(1); //get the first virutal joystick
             try
             {
+                _VJoyConnected = true;
                 _virtualJoyStick.Aquire(); //try to get the virutal joystick
             }
             catch
             {
-                //====================CHANGE THIS TO DISPLAY AN ERROR MSG INSTEAD OF TERMINATING THE APP==============
-                throw new Exception("A error msg needs to be displayed to the user");
+                _VJoyConnected = false;
+                SimpleMouse.Enabled = false;
             }
 
             LoadConfig(); //try to load the config
@@ -404,6 +405,12 @@ namespace AdvancedInput
 
         public void Update(float dt)
         {
+
+            if (!_VJoyConnected)
+            {
+
+                return;
+            }
             //see if we dont have a id for the input wheel
             //in this case we need to run the start up sequence
             if (_inputWheelIdentifyer == string.Empty) 
@@ -519,23 +526,46 @@ namespace AdvancedInput
 
                 case WheelState.Run:
 
-                    if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
+                    if (!_VJoyConnected)
                     {
-                        sb.DrawString(_font, "Input device cannot be found", new Vector2(400, 250), Color.White, 0f, _font.MeasureString("Input device cannot be found") * .5f, 1f, SpriteEffects.None, 0f);
+
+                        foreach (UiEliment b in _uiElements)
+                            b.Draw(sb);
+                        sb.Draw(_dot, new Rectangle(0, 0, 300, 500), Color.Black * .8f);
+                        sb.DrawString(_font, "No Vjoy Device", new Vector2(10, 10), Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
+
+                        sb.DrawString(_font, "To you the software clutch", new Vector2(10, 60), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "you must install vJoy.", new Vector2(10, 80), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                        sb.DrawString(_font, "Without Vjoy installed you", new Vector2(10, 120), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "can only use the timing", new Vector2(10, 140), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "part of this app", new Vector2(10, 160), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                        sb.DrawString(_font, "To use the timings", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "simply start up Iracing", new Vector2(10, 220), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "and pratice your starts.", new Vector2(10, 240), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
                         return;
                     }
 
-                        foreach (UiEliment b in _uiElements)
+                    if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
+                    {
+                        sb.DrawString(_font, "Your Input device cannot be found", new Vector2(400, 220), Color.White, 0f, _font.MeasureString("Your Input device cannot be found") * .5f, .9f, SpriteEffects.None, 0f);
+                        sb.DrawString(_font, "Pleae check your Connection and restart this app.", new Vector2(400, 270), Color.White, 0f, _font.MeasureString("Pleae check your Connection and restart this app.") * .5f, .6f, SpriteEffects.None, 0f);
+                        return;
+                    }
+
+                    foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
-                   
-                 /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
-                    if (_secondClutchButtonIndex == -1)
-                    {
-                        sb.DrawString(_font, "Clutch", new Vector2(110, 110), Color.White);
-                        sb.DrawString(_font, "Click to set up", new Vector2(110, 165), Color.White * .5f, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                        sb.Draw(_iconConfig, new Vector2(300, 105), null, Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
-                    }*/
+
+                    /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
+                       if (_secondClutchButtonIndex == -1)
+                       {
+                           sb.DrawString(_font, "Clutch", new Vector2(110, 110), Color.White);
+                           sb.DrawString(_font, "Click to set up", new Vector2(110, 165), Color.White * .5f, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                           sb.Draw(_iconConfig, new Vector2(300, 105), null, Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
+                       }*/
                     break;
             }
         }

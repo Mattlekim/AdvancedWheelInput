@@ -27,6 +27,8 @@ namespace AdvancedInput
         public static bool IsLButtonDown { get { return _MouseState.LeftButton == ButtonState.Pressed; } }
 
         public static bool IsLButtonClick { get { return _MouseState.LeftButton == ButtonState.Pressed && _LMouseState.LeftButton == ButtonState.Released; } }
+
+        public static bool Enabled = true;
         public static void Reset()
         {
             _LMouseState = _MouseState;
@@ -45,15 +47,16 @@ namespace AdvancedInput
             _LMouseState = _MouseState;
             _MouseState = Mouse.GetState();
 
-            if (_MouseState.LeftButton == ButtonState.Pressed) //left mouse down
-            {
-                if (_LMouseState.LeftButton == ButtonState.Released) //click if last mouse state is released
-                    if (OnLeftClick != null) //on click
-                        OnLeftClick(new Vector2(_MouseState.X, _MouseState.Y));
+            if (Enabled)
+                if (_MouseState.LeftButton == ButtonState.Pressed) //left mouse down
+                {
+                    if (_LMouseState.LeftButton == ButtonState.Released) //click if last mouse state is released
+                        if (OnLeftClick != null) //on click
+                            OnLeftClick(new Vector2(_MouseState.X, _MouseState.Y));
 
-                if (OnLeftDown != null) //on hold
-                    OnLeftDown(new Vector2(_MouseState.X, _MouseState.Y));
-            }
+                    if (OnLeftDown != null) //on hold
+                        OnLeftDown(new Vector2(_MouseState.X, _MouseState.Y));
+                }
 
 
             base.Update(gameTime);
