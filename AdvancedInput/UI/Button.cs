@@ -34,7 +34,7 @@ namespace AdvancedInput.UI
         /// the text to display for the button
         /// </summary>
         public string ButtonText = string.Empty;
-
+        public bool TextShadow = false;
         public Texture2D Icon;
 
         public bool Sticky = false;
@@ -66,7 +66,10 @@ namespace AdvancedInput.UI
             base.Update(dt);
         }
 
-
+        public void ResetButtonState()
+        {
+            Depressed = false;
+        }
         public override void Draw(SpriteBatch sb)
         {
 
@@ -86,11 +89,15 @@ namespace AdvancedInput.UI
 
             if (Icon != null)
             {
-                sb.Draw(Icon, _currentArea.Center(true), null, Color.White, 0f, _currentArea.Center(false) / .6f , .4f, SpriteEffects.None, 0f);
+                sb.Draw(Icon, _currentArea.Center(true), null, Color.White, 0f, _currentArea.Center(false) / .6f, .4f, SpriteEffects.None, 0f);
             }
             else
             if (ButtonText != string.Empty) //draw test
+            {
+                if (TextShadow)
+                    sb.DrawString(Font, ButtonText, _currentArea.Center(true) + new Vector2(2,2), Color.Black, 0f, Font.MeasureString(ButtonText) * .5f, TextScale, SpriteEffects.None, 0f);
                 sb.DrawString(Font, ButtonText, _currentArea.Center(true), TextColour, 0f, Font.MeasureString(ButtonText) * .5f, TextScale, SpriteEffects.None, 0f);
+            }
         }
 
         public Action<Button> OnClick;
