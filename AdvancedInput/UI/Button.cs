@@ -39,6 +39,7 @@ namespace AdvancedInput.UI
 
         public bool Sticky = false;
         public bool Depressed = false;
+        public bool HaveMouseOver = true;
         /// <summary>
         /// creates a new button
         /// </summary>
@@ -70,20 +71,27 @@ namespace AdvancedInput.UI
         {
             Depressed = false;
         }
+
+        private static float Shade;
         public override void Draw(SpriteBatch sb)
         {
 
             if (!_active)
                 return;
 
+            if (HaveMouseOver && _currentArea.Contains(SimpleMouse.Pos))
+                Shade = 2f;
+            else
+                Shade = 1f;
+
             if (!Sticky)
-                sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction)); //draw the button color
+                sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction) * Shade); //draw the button color
             else
             {
                 if (Depressed)
                     sb.Draw(Dot, _currentArea, SecondryColour); //draw the button color
                 else
-                    sb.Draw(Dot, _currentArea, PrimaryColour); //draw the button color
+                    sb.Draw(Dot, _currentArea, PrimaryColour * Shade); //draw the button color
             }
             base.Draw(sb);
 
