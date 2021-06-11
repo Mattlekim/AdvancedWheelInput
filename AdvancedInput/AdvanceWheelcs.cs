@@ -159,10 +159,7 @@ namespace AdvancedInput
             }
 
             LoadConfig(); //try to load the config
-
-            _secondClutchButton = new SecondClutchButton(this);
-            _uiElements.Add(_secondClutchButton); //add our clutch ui button
-
+          
             _surfaceSettings = new Surface()
             {
                 TextName = "Settings",
@@ -323,18 +320,24 @@ namespace AdvancedInput
         /// <param name="content">the game content manager</param>
         public void LoadContent(ContentManager content)
         {
+           
+
             _font = content.Load<SpriteFont>("Font"); //load font
             _iconConfig = content.Load<Texture2D>("Imgs\\config"); //load texture icon for config
             _dot = new Texture2D(_game.GraphicsDevice, 1, 1); //create 1x1 dot
             _dot.SetData<Color>(new Color[1] { Color.White }); //set color of dot to white
 
-            UiEliment.LoadContent(_dot, _font, content); //load ui element content
+            UiEliment.LoadContent(_dot, _font, _game.Content); //load ui element content
+            _secondClutchButton = new SecondClutchButton(this);
+            _uiElements.Add(_secondClutchButton); //add our clutch ui button
+                                                  //  UiEliment.LoadContent(_dot, _font, content); //load ui element content
 
             _bntSettings = new Button(this, new Rectangle(220, 410, 80, 80))
             {
                 Icon = _iconConfig,
                 PrimaryColour = Color.LightBlue * 0,
-                SecondryColour = Color.LightBlue,
+                SecondryColour = Color.OrangeRed,
+                TextScale = .4f,
                 OnClick = (Button ui) =>
                 {
                     _surfaceSettings.Activate();
