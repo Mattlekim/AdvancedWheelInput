@@ -36,6 +36,9 @@ namespace AdvancedInput.UI
         public string ButtonText = string.Empty;
 
         public Texture2D Icon;
+
+        public bool Sticky = false;
+        public bool Depressed = false;
         /// <summary>
         /// creates a new button
         /// </summary>
@@ -70,7 +73,15 @@ namespace AdvancedInput.UI
             if (!_active)
                 return;
 
-            sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction)); //draw the button color
+            if (!Sticky)
+                sb.Draw(Dot, _currentArea, Color.Lerp(PrimaryColour, SecondryColour, _tranaction)); //draw the button color
+            else
+            {
+                if (Depressed)
+                    sb.Draw(Dot, _currentArea, SecondryColour); //draw the button color
+                else
+                    sb.Draw(Dot, _currentArea, PrimaryColour); //draw the button color
+            }
             base.Draw(sb);
 
             if (Icon != null)
@@ -86,6 +97,10 @@ namespace AdvancedInput.UI
 
         public override void OnLClick(Vector2 pos)
         {
+            if (Sticky)
+            {
+                Depressed = !Depressed;
+            }
             if (OnClick != null)
                 OnClick(this);
         }
