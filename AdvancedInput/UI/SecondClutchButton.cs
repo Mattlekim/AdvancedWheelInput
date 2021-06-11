@@ -108,9 +108,9 @@ namespace AdvancedInput.UI
             }
 
 
-            _bntSetInput = new UI.Button(wheel, new Rectangle(210, 80, 80, 80))
+            _bntSetInput = new UI.Button(wheel, new Rectangle(0, 410, 80, 70))
             {
-                PrimaryColour = Color.Green,
+                PrimaryColour = Color.Orange,
                 SecondryColour = Color.OrangeRed,
                 ButtonText = "Set Input\nIn Iracing",
                 TextScale = .3f,
@@ -121,12 +121,14 @@ namespace AdvancedInput.UI
                 }
             };
 
-            _bntSaveConfig = new UI.Button(wheel, new Rectangle(210, 230, 80, 50))
+            _bntSaveConfig = new UI.Button(wheel, new Rectangle(110, 400, 80, 80))
             {
-                PrimaryColour = Color.Orange,
-                SecondryColour = Color.OrangeRed,
+                PrimaryColour = Color.Transparent,
+                SecondryColour = Color.Green,
                 ButtonText = "Save",
-                TextScale = .4f,
+                Icon = Content.Load<Texture2D>("Imgs\\saveicon"),
+             
+                TextScale = .3f,
                 TextShadow = true,
                 OnClick = (Button b) =>
                 {
@@ -162,7 +164,7 @@ namespace AdvancedInput.UI
                 _haveLoadedContent = true;
             }
             //showing save display
-            _showSaved -= dt;
+            _showSaved -= dt * .75f;
             _showSaved = MathHelper.Clamp(_showSaved, 0, 1);
 
        
@@ -311,8 +313,8 @@ namespace AdvancedInput.UI
                 return;
 
             //draw save text when needed
-            sb.Draw(Dot, new Rectangle(0, 450, 500, 50), Color.OrangeRed * _showSaved);
-            sb.DrawString(Font, "Saved Setup", new Vector2(250, 475), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
+            sb.Draw(Dot, new Rectangle(0, 430, 800, 50), Color.Green * _showSaved);
+            sb.DrawString(Font, "Saved Setup", new Vector2(400, 455), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
 
 
             if (Wheel._secondClutchButtonIndex == -1) //if we dont have a button set

@@ -98,9 +98,9 @@ namespace AdvancedInput.UI
             if (Icon != null)
             {
                 if (Shade == 2)
-                    sb.Draw(Icon, _currentArea.Center(true), null, SecondryColour, 0f, _currentArea.Center(false) / .5f, .4f, SpriteEffects.None, 0f);
+                    sb.Draw(Icon, _currentArea.Center(true), null, SecondryColour, 0f, _currentArea.Center(false) / .5f, TextScale, SpriteEffects.None, 0f);
                 else
-                    sb.Draw(Icon, _currentArea.Center(true), null, Color.White, 0f, _currentArea.Center(false) / .5f, .4f, SpriteEffects.None, 0f);
+                    sb.Draw(Icon, _currentArea.Center(true), null, Color.White, 0f, _currentArea.Center(false) / .5f, TextScale, SpriteEffects.None, 0f);
             }
             else
             if (ButtonText != string.Empty) //draw test
