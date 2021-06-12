@@ -48,7 +48,13 @@ namespace vJoy.Wrapper
             State.bDevice = (byte)JoystickId;
             Joystick.AcquireVJD(JoystickId);
             Aquired = true;
+            
             Joystick.ResetVJD(JoystickId);
+        }
+
+        public bool Valid()
+        {
+            return Joystick.GetVJDAxisExist(JoystickId, HID_USAGES.HID_USAGE_Z);
         }
 
         /// <summary>

@@ -36,7 +36,7 @@ namespace AdvancedInput
         /// <summary>
         /// weahter to use the new release methord or not
         /// </summary>
-        internal bool _useNewReleaseMethord = true;
+        internal bool _useNewReleaseMethord = false;
 
         //the current state of the wheel
         private WheelState _currentState = WheelState.Config; //set to config by default
@@ -108,7 +108,12 @@ namespace AdvancedInput
         /// </summary>
         private List<UiEliment> _uiElements = new List<UiEliment>();
 
-        private bool _VJoyConnected = false;
+        /// <summary>
+        /// if vjoy is connect or not
+        /// </summary>
+        private bool _vJoyConnected = false;
+
+        private bool _validVJoyConnection = true;
 
         /// <summary>
         /// depress the second clutch
@@ -149,12 +154,16 @@ namespace AdvancedInput
             _virtualJoyStick = new VirtualJoystick(1); //get the first virutal joystick
             try
             {
-                _VJoyConnected = true;
+                _vJoyConnected = true;
                 _virtualJoyStick.Aquire(); //try to get the virutal joystick
+                if (!_virtualJoyStick.Valid())
+                {
+                    _validVJoyConnection = false;
+                }
             }
             catch
             {
-                _VJoyConnected = false;
+                _vJoyConnected = false;
                 SimpleMouse.Enabled = false;
             }
 
@@ -431,7 +440,7 @@ namespace AdvancedInput
         public void Update(float dt)
         {
 
-            if (!_VJoyConnected)
+            if (!_vJoyConnected || !_validVJoyConnection)
             {
 
                 return;
@@ -551,7 +560,7 @@ namespace AdvancedInput
 
                 case WheelState.Run:
 
-                    if (!_VJoyConnected)
+                    if (!_vJoyConnected)
                     {
 
                         foreach (UiEliment b in _uiElements)
@@ -572,6 +581,36 @@ namespace AdvancedInput
 
                         return;
                     }
+                    else
+                    {
+                        if (!_validVJoyConnection)
+                        {
+                            foreach (UiEliment b in _uiElements)
+                                b.Draw(sb);
+
+                            sb.Draw(_dot, new Rectangle(0, 0, 300, 500), Color.Black * .8f);
+                            sb.DrawString(_font, "VJoy Error", new Vector2(10, 10), Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "To you the software clutch", new Vector2(10, 60), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "you must install vJoy.", new Vector2(10, 80), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                            sb.DrawString(_font, "If Vjoy is installed", new Vector2(10, 120), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "run configure vJoy", new Vector2(10, 140), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "make sure controler 1", new Vector2(10, 160), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "is enabled.", new Vector2(10, 180), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                            sb.DrawString(_font, "Also please make sure", new Vector2(10, 220), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "the the vJoy controler", new Vector2(10, 240), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "has its Z axis enabled.", new Vector2(10, 260), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                            sb.DrawString(_font, "Timings only mode enabled.", new Vector2(10, 300), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "To use the timings", new Vector2(10, 320), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "simply start up Iracing", new Vector2(10, 340), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "and pratice your starts.", new Vector2(10, 360), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+
+                        }
+                        return;
+                    }
+
 
                     if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
                     {
