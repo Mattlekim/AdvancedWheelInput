@@ -38,6 +38,14 @@ namespace AdvancedInput
         /// </summary>
         internal bool _useNewReleaseMethord = true;
 
+        /// <summary>
+        /// used for the new input system
+        /// the old one had a bug too ;)
+        /// </summary>
+        private float _clutchReleaseTimer = 0;
+
+        private float _clutchReleaseTimeStart = 0;
+
         //the current state of the wheel
         private WheelState _currentState = WheelState.Config; //set to config by default
         //the type of config state
@@ -115,6 +123,8 @@ namespace AdvancedInput
 
         private bool _validVJoyConnection = true;
 
+
+        private Random _rd = new Random();
         /// <summary>
         /// depress the second clutch
         /// </summary>
@@ -124,7 +134,17 @@ namespace AdvancedInput
             if (full)
                 _secondClutchDepressedAmount = 1;
             else
+            {
                 _secondClutchDepressedAmount = _secondClutchBitingPoint;
+                if (_useNewReleaseMethord)
+                {
+                    if (_secondClutchRelaseTime <= 1) //set the release times we have a bit of random to emulate human error
+                        _clutchReleaseTimer = (float)_rd.NextDouble() * .2f + .1f;
+                    else
+                        _clutchReleaseTimer = (float)_rd.NextDouble() * .3f + .6f;
+                    _clutchReleaseTimeStart = _clutchReleaseTimer;
+                }
+            }
 
         }
 
@@ -514,11 +534,20 @@ namespace AdvancedInput
                     break;
             }
 
-            
 
-           
 
-            _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
+
+
+            if (_useNewReleaseMethord)
+            {
+                _clutchReleaseTimer -= dt;//release the cutch by time
+                if (_clutchReleaseTimeStart > 0)
+                    _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _secondClutchBitingPoint;  //set the clutch point
+                else
+                    _secondClutchDepressedAmount = 0;
+            }
+            else
+                _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
 
             //================DISPLAY AN ERROR MSG IF NO BUTTONS FOR USER TO KNOW THERE IS A PROBLEM=================
 

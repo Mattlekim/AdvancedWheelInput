@@ -87,6 +87,7 @@ namespace AdvancedInput.UI
                     OnClick = (Button b)=>
                     {
                         _bntFastRelease.ResetButtonState();
+                        Wheel._secondClutchRelaseTime = 2f;
                     }
                 };
 
@@ -100,6 +101,7 @@ namespace AdvancedInput.UI
                     OnClick = (Button b) =>
                     {
                         _bntSlowRelease.ResetButtonState();
+                        Wheel._secondClutchRelaseTime = 1f;
                     }
                 }; 
 
