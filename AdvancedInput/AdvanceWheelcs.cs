@@ -203,13 +203,26 @@ namespace AdvancedInput
                 TextName = "Settings",
                 TextColour = Color.Black,
                 PrimaryColour = Color.LightBlue * .4f,
+                OnActive = (UiEliment sender) =>
+                {
+                    Surface s = sender as Surface;
+
+                    Button b = s.Elements[5] as Button; //get auto load button
+                    b.ResetButtonState();
+                    if (AutoLoadFastestSetup)
+                        b.SetPressed();
+
+                    b = s.Elements[6] as Button; //get the times only mode button
+                    if (TimesOnlyMode)
+                        b.SetPressed();
+                }
             };
            
 
             _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 75, 150, 150))
             {
                 PrimaryColour = Color.LightBlue * .8f,
-                ButtonText = "  Up Button\n\nNot Assigned",
+                ButtonText = "Incress Biting\n      Point\n\nNot Assigned",
                 TextColour = Color.DarkRed,
                 TextScale = .4f,
                 OnClick = (Button b) =>
@@ -224,7 +237,7 @@ namespace AdvancedInput
             _surfaceSettings.AddElement(new Button(this, new Rectangle(275, 75, 150, 150))
             {
                 PrimaryColour = Color.LightBlue * .8f,
-                ButtonText = "Down Button\n\nNot Assigned",
+                ButtonText = "Decress Biting\n      Point\n\nNot Assigned",
                 TextColour = Color.DarkRed,
                 TextScale = .4f,
                 OnClick = (Button b) =>
@@ -235,8 +248,7 @@ namespace AdvancedInput
                     _surfaceSettings.Deactive();
                 }
             });
-
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 275, 150, 150))
+            Button but = new Button(this, new Rectangle(75, 275, 150, 150))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Left Button\n\nNot Assigned",
@@ -249,9 +261,14 @@ namespace AdvancedInput
                     _inputDirection = CardinalDirection.Left;
                     _surfaceSettings.Deactive();
                 }
-            });
+            };
 
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(275, 275, 150, 150))
+            _surfaceSettings.AddElement(but);
+
+            if (_useNewReleaseMethord)
+                but.ButtonText = "Slow Release\n\nNot Assigned";
+
+            but = new Button(this, new Rectangle(275, 275, 150, 150))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Right Button\n\nNot Assigned",
@@ -264,9 +281,14 @@ namespace AdvancedInput
                     _inputDirection = CardinalDirection.Right;
                     _surfaceSettings.Deactive();
                 }
-            });
+            };
 
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(420, 440, 80, 60))
+            if (_useNewReleaseMethord)
+                but.ButtonText = "Fast Release\n\nNot Assigned";
+
+            _surfaceSettings.AddElement(but);
+
+            but = new Button(this, new Rectangle(720, 430, 80, 60))
             {
                 PrimaryColour = Color.Black * .2f,
                 ButtonText = "Back",
@@ -277,9 +299,40 @@ namespace AdvancedInput
                     _surfaceSettings.Deactive();
                     _secondClutchButton.Activate();
                     _bntSettings.Activate();
+                    SaveConfig();
                 }
-            
+
+            };
+
+            _surfaceSettings.AddElement(but);
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(600, 75, 200, 100))
+            {
+                PrimaryColour = Color.Orange * .2f,
+                SecondryColour = Color.Orange,
+                ButtonText = " Auto Load\nBest Setup",
+                TextScale = .6f,
+                Sticky = true,
+                OnClick = (Button b) =>
+                {
+                    AutoLoadFastestSetup = b.Depressed;
+                }
             });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(600, 275, 200, 100))
+            {
+                PrimaryColour = Color.Orange * .2f,
+                SecondryColour = Color.Orange,
+                ButtonText = "Timing Mode\n       Only",
+                TextScale = .6f,
+                Sticky = true,
+
+                OnClick = (Button b) =>
+                {
+                    TimesOnlyMode = b.Depressed;
+                }
+            });
+
 
             _surfaceSettings.Deactive();
             _uiElements.Add(_surfaceSettings);
@@ -293,30 +346,30 @@ namespace AdvancedInput
                 Button b = ui as Button;
                 if (b!= null)
                 {
-                    if (b.ButtonText.Contains("Up"))
+                    if (b.ButtonText.Contains("Incress"))
                     {
                         if (_directionButtons[(int)CardinalDirection.Up].Index == -1)
                         {
-                            b.ButtonText = "  Up Button\n\nNot Assigned";
+                            b.ButtonText = "Incress Biting\n      Point\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
                         }
                         else
                         {
-                            b.ButtonText = "  Up Button";
+                            b.ButtonText = "Incress Biting\n      Point";
                             b.TextColour = Color.Black;
                         }
                     }
 
-                    if (b.ButtonText.Contains("Down"))
+                    if (b.ButtonText.Contains("Decress"))
                     {
                         if (_directionButtons[(int)CardinalDirection.Down].Index == -1)
                         {
-                            b.ButtonText = "  Down Button\n\nNot Assigned";
+                            b.ButtonText = "Decress Biting\n      Point\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
                         }
                         else
                         {
-                            b.ButtonText = "  Down Button";
+                            b.ButtonText = "Decress Biting\n      Point";
                             b.TextColour = Color.Black;
                         }
                     }
@@ -345,6 +398,34 @@ namespace AdvancedInput
                         else
                         {
                             b.ButtonText = "  Right Button";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+
+                    if (b.ButtonText.Contains("Slow"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Left].Index == -1)
+                        {
+                            b.ButtonText = "Slow Release\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "Slow Release";
+                            b.TextColour = Color.Black;
+                        }
+                    }
+
+                    if (b.ButtonText.Contains("Fast"))
+                    {
+                        if (_directionButtons[(int)CardinalDirection.Right].Index == -1)
+                        {
+                            b.ButtonText = "Slow Release\n\nNot Assigned";
+                            b.TextColour = Color.DarkRed;
+                        }
+                        else
+                        {
+                            b.ButtonText = "Slow Release";
                             b.TextColour = Color.Black;
                         }
                     }

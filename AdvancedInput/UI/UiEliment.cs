@@ -59,6 +59,7 @@ namespace AdvancedInput.UI
         public float Visiblity = 1f;
 
         private bool _activateNextUpdate = false;
+
         public void Activate()
         {
             if (_active)

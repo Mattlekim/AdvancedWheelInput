@@ -32,7 +32,7 @@ namespace AdvancedInput.UI
             if (!_active)
                 return;
 
-            sb.Draw(Dot, new Rectangle(0, 0, 500, 500), PrimaryColour);
+            sb.Draw(Dot, new Rectangle(0, 0, 800, 500), PrimaryColour);
 
             base.Draw(sb);
 
