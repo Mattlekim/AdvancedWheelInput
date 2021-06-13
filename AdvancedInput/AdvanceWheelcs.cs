@@ -328,7 +328,7 @@ namespace AdvancedInput
                 }
             });
 
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(600, 275, 200, 100))
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(600, 200, 200, 100))
             {
                 PrimaryColour = Color.Orange * .2f,
                 SecondryColour = Color.Orange,
@@ -339,6 +339,25 @@ namespace AdvancedInput
                 OnClick = (Button b) =>
                 {
                     TimesOnlyMode = b.Depressed;
+                }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(600, 325, 200, 100))
+            {
+                PrimaryColour = Color.Red * .2f,
+                SecondryColour = Color.Orange,
+                ButtonText = "Clear Current\n  Car Times",
+                TextScale = .6f,
+
+                OnClick = (Button b) =>
+                {
+                    if (_telemitry.IsConnected)
+                        if (_telemitry.CurrentCar != null && _telemitry.CurrentCar != string.Empty)
+                        {
+                            _telemitry.ClearCurrentCarTimes();
+                            _telemitry.DeleteTelimtoryFile();
+                        }
+
                 }
             });
 

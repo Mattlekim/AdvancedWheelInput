@@ -13,7 +13,7 @@ using Riddlersoft.Core.Xml;
 namespace AdvancedInput
 {
 
-   
+
     class IRacingTelemitry : GameComponent
     {
 
@@ -37,6 +37,10 @@ namespace AdvancedInput
             OnConnected += OnConnect;
         }
 
+        public void ClearCurrentCarTimes()
+        {
+            TimeRecords.Clear();
+        }
         public void AddTimeRecord0To60()
         {
             if (CurrentCar == null || CurrentCar == string.Empty)
@@ -47,7 +51,7 @@ namespace AdvancedInput
                 float lowert = float.MinValue;
                 int index = -1;
 
-                for (int i =0; i < TimeRecords.Count; i++)
+                for (int i = 0; i < TimeRecords.Count; i++)
                     if (TimeRecords[i].ZeroToSixty > lowert)
                     {
                         index = i;
@@ -88,10 +92,10 @@ namespace AdvancedInput
             SpeedMph = data.Telemetry.Speed * 2.25f;
             if (!IsConnected)
             {
-                
-                
 
-                
+
+
+
                 if (OnConnected != null)
                     OnConnected();
             }
@@ -139,7 +143,7 @@ namespace AdvancedInput
                 }
                 else
                     if (SpeedMph < 60)
-                        _log0to100 = false;
+                    _log0to100 = false;
                 return;
             }
 
@@ -184,6 +188,15 @@ namespace AdvancedInput
         }
 
         public string path;
+
+        public void DeleteTelimtoryFile()
+        {
+            string tmp = CurrentCar.Replace("-", "");
+            tmp = tmp.Replace(" ", "");
+            path = $"{Dir}\\{tmp}.tel";
+            if (File.Exists(path))
+                File.Delete(path);
+        }
         public void SaveTelimtory()
         {
             if (!Directory.Exists($"{Dir}"))
