@@ -269,10 +269,18 @@ namespace AdvancedInput.UI
                     LockControles = true;
 
                 if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]))
+                {
+                    if (Wheel._useNewReleaseMethord)
+                        Wheel._secondClutchRelaseTime = 1f;
                     _sliderToChange--;
+                }
 
                 if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]))
+                {
+                    if (Wheel._useNewReleaseMethord)
+                        Wheel._secondClutchRelaseTime = 2f;
                     _sliderToChange++;
+                }
                 _sliderToChange = MathHelper.Clamp(_sliderToChange,0,1);
                 if (_sliderToChange == 0)
                 {

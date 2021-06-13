@@ -280,7 +280,7 @@ namespace AdvancedInput
             but = new Button(this, new Rectangle(275, 275, 150, 150))
             {
                 PrimaryColour = Color.LightBlue * .8f,
-                ButtonText = "Right Button\n\nNot Assigned",
+                ButtonText = "Slow Release\n\nNot Assigned",
                 TextColour = Color.DarkRed,
                 TextScale = .4f,
                 OnClick = (Button b) =>
