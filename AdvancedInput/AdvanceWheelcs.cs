@@ -132,7 +132,7 @@ namespace AdvancedInput
 
         private bool _validVJoyConnection = true;
 
-
+        private float _newReleaseClutchBitingPointCatch;
         private Random _rd = new Random();
         /// <summary>
         /// depress the second clutch
@@ -141,10 +141,19 @@ namespace AdvancedInput
         public void DepressSecondClutch(bool full = false)
         {
             if (full)
+            {
                 _secondClutchDepressedAmount = 1;
+                _newReleaseClutchBitingPointCatch = 1f;
+                if (_useNewReleaseMethord)
+                {
+                    _clutchReleaseTimer = .5f;
+                    _clutchReleaseTimeStart = _clutchReleaseTimer;
+                }
+            }
             else
             {
                 _secondClutchDepressedAmount = _secondClutchBitingPoint;
+                _newReleaseClutchBitingPointCatch = _secondClutchBitingPoint;
                 if (_useNewReleaseMethord)
                 {
                     if (_secondClutchRelaseTime <= 1) //set the release times we have a bit of random to emulate human error
@@ -632,7 +641,7 @@ namespace AdvancedInput
             {
                 _clutchReleaseTimer -= dt;//release the cutch by time
                 if (_clutchReleaseTimeStart > 0)
-                    _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _secondClutchBitingPoint;  //set the clutch point
+                    _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _newReleaseClutchBitingPointCatch;  //set the clutch point
                 else
                     _secondClutchDepressedAmount = 0;
             }

@@ -20,12 +20,14 @@ namespace AdvancedInput
     
         public float ClutchReleaseTime;
 
+        public float HoldTime;
         public TimeRecord() { }
-        public TimeRecord(float zeroto60, float cbp, float crt)
+        public TimeRecord(float zeroto60, float cbp, float crt, float ht = 0)
         {
             ZeroToSixty = zeroto60;
             ClutchBitingPoint = cbp;
             ClutchReleaseTime = crt;
+            HoldTime = ht;
         }
 
     }

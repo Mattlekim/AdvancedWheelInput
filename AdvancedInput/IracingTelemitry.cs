@@ -58,7 +58,7 @@ namespace AdvancedInput
                     TimeRecords.RemoveAt(index);
             }
 
-            TimeRecords.Add(new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime)
+            TimeRecords.Add(new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime, _holdTime)
             {
                 WasClutchStart = _usedSecondClutch,
             });
@@ -112,6 +112,7 @@ namespace AdvancedInput
         private bool _log0to100 = false;
         private float _0to60Time = 0;
         public bool _usedSecondClutch = false;
+        private float _holdTime = 0;
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
@@ -146,6 +147,8 @@ namespace AdvancedInput
             {
                 if (SpeedMph > 0.02f)
                 {
+                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
+                        _holdTime += dt;
                     if (SpeedMph >= 60)
                     {
                         _log0to60 = false;
@@ -157,6 +160,8 @@ namespace AdvancedInput
                 {
                     _0to60Time = 0;
                     _log0to60 = true;
+                    _log0to100 = false;
+                    _holdTime = 0;
                     if (_wheel._secondClutchDepressedAmount > 0)
                         _usedSecondClutch = true;
                     else
@@ -168,6 +173,8 @@ namespace AdvancedInput
             {
                 _0to60Time = 0;
                 _log0to60 = true;
+                _log0to100 = false;
+                _holdTime = 0;
                 if (_wheel._secondClutchDepressedAmount > 0)
                     _usedSecondClutch = true;
                 else
@@ -204,7 +211,7 @@ namespace AdvancedInput
                         writer.WriteAttributeFloat("ztoone", tr.ZeroToOnehundrand);
                         writer.WriteAttributeFloat("Biting", tr.ClutchBitingPoint);
                         writer.WriteAttributeFloat("Release", tr.ClutchReleaseTime);
-
+                        writer.WriteAttributeFloat("HoldTime", tr.HoldTime);
                         writer.WriteEndElement();
                     }
 
@@ -248,8 +255,9 @@ namespace AdvancedInput
                                     ClutchReleaseTime = reader.ReadAttributeFloat("Release"),
                                     ZeroToSixty = reader.ReadAttributeFloat("ztosix"),
                                     ZeroToOnehundrand = reader.ReadAttributeFloat("ztoone"),
-                                    WasClutchStart = true
-                                }); ;
+                                    HoldTime = reader.ReadAttributeFloat("HoldTime"),
+                                    WasClutchStart = true,
+                                }); 
                             }
                         }
 

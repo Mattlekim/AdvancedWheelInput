@@ -390,11 +390,11 @@ namespace AdvancedInput.UI
 
                 sb.Draw(Dot, new Rectangle(300, 50, 500, 25), Color.LightBlue * .8f);
 
-                sb.DrawString(Font, $"0 to 60", new Vector2(330, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"0 - 100 ", new Vector2(430, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"Biting Point", new Vector2(530, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"Release Time", new Vector2(630, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-
+                sb.DrawString(Font, $"0 to 60", new Vector2(320, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"0 - 100 ", new Vector2(410, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Biting Point", new Vector2(490, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Release Time", new Vector2(600, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Hold Time", new Vector2(715, 52), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
 
                 Color col = Color.LightBlue;
                 float fade = .5f;
@@ -420,10 +420,20 @@ namespace AdvancedInput.UI
                     TimeRecord tr = Wheel._telemitry.TimeRecords[i];
                     if (!tr.WasClutchStart)
                         sb.DrawString(Font, $"*", new Vector2(310, 85 + 20 * i), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToSixty, 2)} sec", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                    sb.DrawString(Font, $"{Math.Round(1 / tr.ClutchReleaseTime, 2)} ", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToOnehundrand, 2)} sec", new Vector2(430, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-                    sb.DrawString(Font, $"{Math.Round(tr.ClutchBitingPoint, 2)}", new Vector2(530, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToSixty, 2)}s", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    if (Wheel._useNewReleaseMethord)
+                    {
+                        if (Wheel._telemitry.TimeRecords[i].ClutchReleaseTime <= 1) //fast
+                            sb.DrawString(Font, $"Fast", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                        else
+                            sb.DrawString(Font, $"Slow", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    }
+                    else
+                        sb.DrawString(Font, $"{Math.Round(1 / tr.ClutchReleaseTime, 2)} ", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ZeroToOnehundrand, 2)}s", new Vector2(420, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                    sb.DrawString(Font, $"{Math.Round(tr.ClutchBitingPoint, 2)}", new Vector2(510, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+
+                    sb.DrawString(Font, $"{Math.Round(tr.HoldTime, 2)}s", new Vector2(730, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                 }
             }
 
