@@ -794,7 +794,8 @@ namespace AdvancedInput
                 writer.WriteStartElement("Config");
 
                 writer.WriteAttributeString("InputId", _inputWheelIdentifyer);
-                writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex.Index);
+                writer.WriteAttributeEnum<InputType>("SecondClutchInputType", _secondClutchButtonIndex.Type);
+                writer.WriteAttributeInt("SecondClutchInputIndex", _secondClutchButtonIndex.Index);
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
 
@@ -833,7 +834,9 @@ namespace AdvancedInput
                         if (reader.Name == "Config")
                         {
                             _inputWheelIdentifyer = reader.ReadAttributeString("InputId");
-                            _secondClutchButtonIndex = reader.ReadAttributeInt("SecondClutch");
+
+                            _secondClutchButtonIndex = new Input(reader.ReadAttributeEnum<InputType>("SecondClutchInputType"), reader.ReadAttributeInt("SecondClutchInputIndex"));
+
                             _secondClutchBitingPoint = reader.ReadAttributeFloat("SecondClutchBite");
                             _secondClutchRelaseTime = reader.ReadAttributeFloat("SecondClutchReleaseTime");
 

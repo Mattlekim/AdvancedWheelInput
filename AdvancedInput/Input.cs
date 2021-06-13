@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdvancedInput
 {
-    public enum InputType { Button, HatUp,HatDown,HatLeft,HatRight};
+    public enum InputType { Button, HatUp,HatDown,HatLeft,HatRight, Anolog};
 
 
     public class Input
