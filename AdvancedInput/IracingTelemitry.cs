@@ -37,6 +37,10 @@ namespace AdvancedInput
             OnConnected += OnConnect;
         }
 
+        public void ClearCurrentCarTimes()
+        {
+            TimeRecords.Clear();
+        }
         public void AddTimeRecord0To60()
         {
             if (CurrentCar == null || CurrentCar == string.Empty)
