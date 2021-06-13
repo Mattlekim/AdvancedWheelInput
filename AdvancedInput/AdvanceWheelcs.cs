@@ -36,7 +36,7 @@ namespace AdvancedInput
         /// <summary>
         /// weahter to use the new release methord or not
         /// </summary>
-        internal bool _useNewReleaseMethord = false;
+        internal bool _useNewReleaseMethord = true;
 
         //the current state of the wheel
         private WheelState _currentState = WheelState.Config; //set to config by default
@@ -356,6 +356,8 @@ namespace AdvancedInput
             };
 
             _uiElements.Add(_bntSettings);
+
+            _secondClutchButton.SetReleaseState(_secondClutchRelaseTime);
         }
 
         public bool IsWheelInputPressed(Input i)
@@ -727,9 +729,12 @@ namespace AdvancedInput
                 if (jc.Identifier == _inputWheelIdentifyer) //if we find the wheel we are using 
                 {
                     _inputWheelIndex = i;
-                    return;
+                    break;
                 }
             }
+
+            ///update the buttons to the correct state
+            
 
         }
     }

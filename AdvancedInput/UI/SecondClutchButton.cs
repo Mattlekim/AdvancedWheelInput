@@ -145,6 +145,23 @@ namespace AdvancedInput.UI
             AddElement(_bntSaveConfig);
         }
 
+        /// <summary>
+        /// used to set the input state for the new release system
+        /// any value 1 or lower is quick release
+        /// anything else is slow relase
+        /// </summary>
+        /// <param name="inputValue"></param>
+        public void SetReleaseState(float inputValue)
+        {
+            _bntFastRelease.ResetButtonState();
+            _bntSlowRelease.ResetButtonState();
+            if (inputValue <= 1)
+                _bntFastRelease.SetPressed();
+            else
+                _bntSlowRelease.SetPressed();
+                
+        }
+
         float _flasher;
 
         int _selectedTime = -1;
