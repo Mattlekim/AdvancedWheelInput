@@ -166,8 +166,20 @@ namespace AdvancedInput.UI
 
         float _flasher;
 
+        /// <summary>
+        /// the time to highlihgt
+        /// </summary>
         int _selectedTime = -1;
 
+
+        public void SetSelectedTime(int index)
+        {
+            if (index < 0)
+                return;
+            if (index >= Wheel._telemitry.TimeRecords.Count)
+                return;
+            _selectedTime = index;
+        }
 
         private bool _haveLoadedContent = false;
         public override void Update(float dt)

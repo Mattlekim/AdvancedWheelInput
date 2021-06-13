@@ -230,7 +230,7 @@ namespace AdvancedInput
             if (File.Exists(path))
             {
 
-                
+
 
                 try
                 {
@@ -254,6 +254,26 @@ namespace AdvancedInput
                         }
 
                         reader.Close();
+                    }
+
+
+                    if (_wheel.AutoLoadFastestSetup)
+                    {
+                        int index = -1;
+                        float time = float.PositiveInfinity;
+                        for (int i = 0; i < TimeRecords.Count; i++)
+                            if (time > TimeRecords[i].ZeroToSixty)
+                            {
+                                time = TimeRecords[i].ZeroToSixty;
+                                index = i;
+                            }
+
+                        if (index >= 0)
+                        {
+                            _wheel._secondClutchBitingPoint = TimeRecords[index].ClutchBitingPoint;
+                            _wheel._secondClutchRelaseTime = TimeRecords[index].ClutchReleaseTime;
+                            _wheel._secondClutchButton.SetSelectedTime(index);
+                        }
                     }
                 }
                 catch { }

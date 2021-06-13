@@ -69,6 +69,10 @@ namespace AdvancedInput
         /// </summary>
         internal int _secondClutchButtonIndex = -1;
 
+        /// <summary>
+        /// if true we will search through the times and load the fastest detales in
+        /// </summary>
+        public bool AutoLoadFastestSetup { get; private set; } = true;
 
         /// <summary>
         /// the inputs for making ajustments with the wheel
@@ -157,7 +161,7 @@ namespace AdvancedInput
         /// <summary>
         /// button for the second clutch 
         /// </summary>
-        SecondClutchButton _secondClutchButton;
+        internal SecondClutchButton _secondClutchButton;
 
         /// <summary>
         /// button for the setttings
