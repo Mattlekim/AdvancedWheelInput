@@ -75,6 +75,11 @@ namespace AdvancedInput
         public bool AutoLoadFastestSetup { get; private set; } = true;
 
         /// <summary>
+        /// work in progress
+        /// </summary>
+        public bool TimesOnlyMode { get; private set; } = false;
+
+        /// <summary>
         /// the inputs for making ajustments with the wheel
         /// </summary>
         internal Input[] _directionButtons = new Input[4] { -1, -1, -1, -1 };
@@ -685,16 +690,19 @@ namespace AdvancedInput
                 writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex);
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
-                
-                    writer.WriteAttributeEnum<InputType>("InputUpType", _directionButtons[(int)CardinalDirection.Up].Type);
-                    writer.WriteAttributeInt("InputUpIndex", _directionButtons[(int)CardinalDirection.Up].Index);
-                    writer.WriteAttributeEnum<InputType>("InputDownType", _directionButtons[(int)CardinalDirection.Down].Type);
-                    writer.WriteAttributeInt("InputDownIndex", _directionButtons[(int)CardinalDirection.Down].Index);
-                    writer.WriteAttributeEnum<InputType>("InputLeftType", _directionButtons[(int)CardinalDirection.Left].Type);
-                    writer.WriteAttributeInt("InputLeftIndex", _directionButtons[(int)CardinalDirection.Left].Index);
-                    writer.WriteAttributeEnum<InputType>("InputRightType", _directionButtons[(int)CardinalDirection.Right].Type);
-                    writer.WriteAttributeInt("InputRightIndex", _directionButtons[(int)CardinalDirection.Right].Index);
-                
+
+                writer.WriteAttributeEnum<InputType>("InputUpType", _directionButtons[(int)CardinalDirection.Up].Type);
+                writer.WriteAttributeInt("InputUpIndex", _directionButtons[(int)CardinalDirection.Up].Index);
+                writer.WriteAttributeEnum<InputType>("InputDownType", _directionButtons[(int)CardinalDirection.Down].Type);
+                writer.WriteAttributeInt("InputDownIndex", _directionButtons[(int)CardinalDirection.Down].Index);
+                writer.WriteAttributeEnum<InputType>("InputLeftType", _directionButtons[(int)CardinalDirection.Left].Type);
+                writer.WriteAttributeInt("InputLeftIndex", _directionButtons[(int)CardinalDirection.Left].Index);
+                writer.WriteAttributeEnum<InputType>("InputRightType", _directionButtons[(int)CardinalDirection.Right].Type);
+                writer.WriteAttributeInt("InputRightIndex", _directionButtons[(int)CardinalDirection.Right].Index);
+
+                writer.WriteAttributeBool("AutoLoadBestSetup", AutoLoadFastestSetup);
+                writer.WriteAttributeBool("TimingsOnlyMode", TimesOnlyMode);
+
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
                 writer.Close();
@@ -738,6 +746,9 @@ namespace AdvancedInput
                             t = reader.ReadAttributeEnum<InputType>("InputRightType");
                             i = reader.ReadAttributeInt("InputRightIndex");
                             _directionButtons[(int)CardinalDirection.Right] = new Input(t, i);
+
+                            AutoLoadFastestSetup = reader.ReadAttributeBool("AutoLoadBestSetup");
+                            TimesOnlyMode = reader.ReadAttributeBool("TimingsOnlyMode");
                         }
                     }
 
