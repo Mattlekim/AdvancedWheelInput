@@ -48,6 +48,8 @@ namespace AdvancedInput.UI
         protected Rectangle _currentArea;
         public Rectangle CurrentArea { get { return _currentArea; } }
 
+
+        public Action<UiEliment> OnActive;
         /// <summary>
         /// weather the compoante is active or not
         /// </summary>
@@ -59,8 +61,14 @@ namespace AdvancedInput.UI
         private bool _activateNextUpdate = false;
         public void Activate()
         {
+            if (_active)
+                return;
+
             if (Locked)
                 return;
+
+            if (OnActive != null)
+                OnActive(this);
 
             _activateNextUpdate = true;
             foreach (UiEliment ui in Elements)
