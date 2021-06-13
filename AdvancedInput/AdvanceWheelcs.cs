@@ -353,15 +353,12 @@ namespace AdvancedInput
                 {
                     if (_telemitry.IsConnected)
                         if (_telemitry.CurrentCar != null && _telemitry.CurrentCar != string.Empty)
-                        {
                             _telemitry.ClearCurrentCarTimes();
-                            _telemitry.DeleteTelimtoryFile();
-                        }
-
                 }
             });
 
 
+                            _telemitry.DeleteTelimtoryFile();
             _surfaceSettings.Deactive();
             _uiElements.Add(_surfaceSettings);
             UpdateSuraceButtons();
