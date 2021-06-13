@@ -606,9 +606,9 @@ namespace AdvancedInput
                             sb.DrawString(_font, "To use the timings", new Vector2(10, 320), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
                             sb.DrawString(_font, "simply start up Iracing", new Vector2(10, 340), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
                             sb.DrawString(_font, "and pratice your starts.", new Vector2(10, 360), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
-
+                            return;
                         }
-                        return;
+                        
                     }
 
 
