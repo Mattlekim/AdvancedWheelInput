@@ -357,11 +357,11 @@ namespace AdvancedInput
                             _telemitry.ClearCurrentCarTimes();
                             _telemitry.DeleteTelimtoryFile();
                         }
-
                 }
             });
 
 
+                            
             _surfaceSettings.Deactive();
             _uiElements.Add(_surfaceSettings);
             UpdateSuraceButtons();
@@ -448,12 +448,12 @@ namespace AdvancedInput
                     {
                         if (_directionButtons[(int)CardinalDirection.Right].Index == -1)
                         {
-                            b.ButtonText = "Slow Release\n\nNot Assigned";
+                            b.ButtonText = "Fast Release\n\nNot Assigned";
                             b.TextColour = Color.DarkRed;
                         }
                         else
                         {
-                            b.ButtonText = "Slow Release";
+                            b.ButtonText = "Fast Release";
                             b.TextColour = Color.Black;
                         }
                     }
