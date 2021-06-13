@@ -340,7 +340,7 @@ namespace AdvancedInput.UI
         {
             if (!_active)
                 return;
-            if (Wheel._secondClutchButtonIndex == -1)
+            if (Wheel._secondClutchButtonIndex.Index == -1)
                 _detectSecondClutchInput = true;
 
         }
@@ -356,7 +356,7 @@ namespace AdvancedInput.UI
             sb.DrawString(Font, "Saved Setup", new Vector2(400, 455), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
 
 
-            if (Wheel._secondClutchButtonIndex == -1) //if we dont have a button set
+            if (Wheel._secondClutchButtonIndex.Index == -1) //if we dont have a button set
             {
 
 

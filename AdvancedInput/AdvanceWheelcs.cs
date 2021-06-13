@@ -67,7 +67,7 @@ namespace AdvancedInput
         /// <summary>
         /// the button index to use for the second clutch
         /// </summary>
-        internal int _secondClutchButtonIndex = -1;
+        internal Input _secondClutchButtonIndex = -1;
 
         /// <summary>
         /// if true we will search through the times and load the fastest detales in
@@ -672,9 +672,7 @@ namespace AdvancedInput
             if (_inputWheel.Buttons != null) //check that the current input has buttons
                 if (_inputWheel.Buttons.Length > 0) //Make sure we have a button
                 {
-                    if (_inputWheelIndex.Index > -1 && _secondClutchButtonIndex > -1) //check things are set up
-                        if (_secondClutchButtonIndex < _inputWheel.Buttons.Length) //make sure index exist
-                        if (_inputWheel.Buttons[_secondClutchButtonIndex] == ButtonState.Pressed) //if its pressed
+                   if (IsWheelInputPressed(_secondClutchButtonIndex))
                             DepressSecondClutch(); //depresse the clutch
                 }
 
@@ -796,7 +794,7 @@ namespace AdvancedInput
                 writer.WriteStartElement("Config");
 
                 writer.WriteAttributeString("InputId", _inputWheelIdentifyer);
-                writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex);
+                writer.WriteAttributeInt("SecondClutch", _secondClutchButtonIndex.Index);
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
 
