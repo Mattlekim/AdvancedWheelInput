@@ -67,6 +67,11 @@ namespace AdvancedInput.UI
             base.Update(dt);
         }
 
+
+        public void SetPressed()
+        {
+            Depressed = true;
+        }
         public void ResetButtonState()
         {
             Depressed = false;
