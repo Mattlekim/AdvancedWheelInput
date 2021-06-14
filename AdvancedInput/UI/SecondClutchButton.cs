@@ -18,7 +18,7 @@ namespace AdvancedInput.UI
         /// <summary>
         /// flag for waiting for user to press a button to assign to second clutch
         /// </summary>
-        private bool _detectSecondClutchInput = false;
+        private bool DetectSecondClutchInput = false;
 
         //sliders for biting point and relase time
         private Slider _slBitingPoint;
@@ -208,13 +208,13 @@ namespace AdvancedInput.UI
                 return;
 
 
-            if (_detectSecondClutchInput) //if we are waiting to detect a button press for clutch
+            if (DetectSecondClutchInput) //if we are waiting to detect a button press for clutch
             {
                 for (int i = 0; i < Wheel._inputWheel.Buttons.Length; i++) //check all buttons on wheel
                 {
                     if (Wheel._inputWheel.Buttons[i] == Microsoft.Xna.Framework.Input.ButtonState.Pressed) //look for press
                     {
-                        _detectSecondClutchInput = false; //turn the flag off
+                        DetectSecondClutchInput = false; //turn the flag off
                         Wheel._secondClutchButtonIndex = i; //set the button
                         Wheel.SaveConfig(); //save the config
                         break;
@@ -341,7 +341,7 @@ namespace AdvancedInput.UI
             if (!_active)
                 return;
             if (Wheel._secondClutchButtonIndex.Index == -1)
-                _detectSecondClutchInput = true;
+                DetectSecondClutchInput = true;
 
         }
 
@@ -361,7 +361,7 @@ namespace AdvancedInput.UI
 
 
 
-                if (_detectSecondClutchInput) //if wating for user to press a button display a promt
+                if (DetectSecondClutchInput) //if wating for user to press a button display a promt
                     sb.DrawString(Wheel._font, "Press button for second clutch mapping", new Vector2(250, 250), Color.White * (_flasher * _flasher), 0f,
                         Wheel._font.MeasureString("Press button for second clutch mapping") * .5f, .45f, SpriteEffects.None, 0f);
                 else
@@ -373,6 +373,7 @@ namespace AdvancedInput.UI
                 }
                 return;
             }
+           
 
             if (LockControles)
             {

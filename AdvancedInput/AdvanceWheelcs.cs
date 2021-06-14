@@ -26,12 +26,12 @@ namespace AdvancedInput
         /// <summary>
         /// the center value for an axis only has positive vlaue
         /// </summary>
-        const int CenterAxisValue = 16000;
+        const int HalfValue = 16000;
 
         /// <summary>
         /// the max value for a positive only axis
         /// </summary>
-        const int MaxAxisValue = CenterAxisValue * 2;
+        const int MaxAxisValue = HalfValue * 2;
 
         /// <summary>
         /// weahter to use the new release methord or not
@@ -105,7 +105,6 @@ namespace AdvancedInput
         /// </summary>
         private VirtualJoystick _virtualJoyStick;
 
-        
         /// <summary>
         /// the font for displaying text
         /// </summary>
@@ -228,12 +227,12 @@ namespace AdvancedInput
             };
            
 
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(75, 75, 150, 150))
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(50, 75, 125, 125))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Incress Biting\n      Point\n\nNot Assigned",
                 TextColour = Color.DarkRed,
-                TextScale = .4f,
+                TextScale = .35f,
                 OnClick = (Button b) =>
                 {
                     _currentState = WheelState.Config;
@@ -243,12 +242,12 @@ namespace AdvancedInput
                 }
             });
 
-            _surfaceSettings.AddElement(new Button(this, new Rectangle(275, 75, 150, 150))
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(200, 75, 125, 125))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Decress Biting\n      Point\n\nNot Assigned",
                 TextColour = Color.DarkRed,
-                TextScale = .4f,
+                TextScale = .35f,
                 OnClick = (Button b) =>
                 {
                     _currentState = WheelState.Config;
@@ -257,12 +256,12 @@ namespace AdvancedInput
                     _surfaceSettings.Deactive();
                 }
             });
-            Button but = new Button(this, new Rectangle(75, 275, 150, 150))
+            Button but = new Button(this, new Rectangle(50, 300, 125, 125))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Left Button\n\nNot Assigned",
                 TextColour = Color.DarkRed,
-                TextScale = .4f,
+                TextScale = .35f,
                 OnClick = (Button b) =>
                 {
                     _currentState = WheelState.Config;
@@ -277,12 +276,12 @@ namespace AdvancedInput
             if (_useNewReleaseMethord)
                 but.ButtonText = "Slow Release\n\nNot Assigned";
 
-            but = new Button(this, new Rectangle(275, 275, 150, 150))
+            but = new Button(this, new Rectangle(200, 300, 125, 125))
             {
                 PrimaryColour = Color.LightBlue * .8f,
                 ButtonText = "Slow Release\n\nNot Assigned",
                 TextColour = Color.DarkRed,
-                TextScale = .4f,
+                TextScale = .35f,
                 OnClick = (Button b) =>
                 {
                     _currentState = WheelState.Config;
@@ -296,6 +295,20 @@ namespace AdvancedInput
                 but.ButtonText = "Fast Release\n\nNot Assigned";
 
             _surfaceSettings.AddElement(but);
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(350, 75, 125, 125))
+            {
+                PrimaryColour = Color.LightBlue * .8f,
+                TextScale = .35f,
+                TextColour = Color.Black,
+                ButtonText = "Map Clutch",
+                OnClick = (Button b) =>
+                {
+                    _surfaceSettings.Deactive();
+                    _currentState = WheelState.Config;
+                    _configState = ConfigArea.DetectClutch;
+                }
+            });
 
             but = new Button(this, new Rectangle(720, 430, 80, 60))
             {
@@ -553,7 +566,7 @@ namespace AdvancedInput
                         for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                             if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                             {
-                                return i;
+                                return c;
                             }
                     }
 
@@ -630,6 +643,7 @@ namespace AdvancedInput
                     break;
 
                 case WheelState.Config:
+                    Input bnt;
                     switch (_configState)
                     {
                         case ConfigArea.SetDirectionInput:
@@ -637,7 +651,7 @@ namespace AdvancedInput
                                 foreach (UiEliment b in _uiElements)
                                     b.Update(dt);
                                 return;*/
-                            Input bnt = GetInputButton();
+                            bnt = GetInputButton();
                             if (bnt.Index != -1) //if a button is press
                             {
                                 _directionButtons[(int)_inputDirection] = bnt;
@@ -647,6 +661,17 @@ namespace AdvancedInput
                                 SaveConfig();
                             }
                             return;
+                        case ConfigArea.DetectClutch:
+                            bnt = GetInputButton();
+                            if (bnt.Index != -1) //if a button is press
+                            {
+                                _secondClutchButtonIndex = bnt;
+                                _currentState = WheelState.Run;
+                                _surfaceSettings.Activate();
+                                UpdateSuraceButtons();
+                                SaveConfig();
+                            }
+                            break;
                     }
                     break;
             }
@@ -679,7 +704,12 @@ namespace AdvancedInput
             _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchDepressedAmount, 0, 1); //standard clamp
 
             //update the virtual joystick
-            _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(MaxAxisValue * _secondClutchDepressedAmount), Axis.HID_USAGE_Z);
+            //now there is a really annoying thing about vjoy axis
+            //when vjoy has no api setting data the axis default to half value
+            //so if we run Iracing without runnig this app the clutch defaults to half pressed
+            //therefore we have to componsate by not allowing the axis to go below half value
+            //we loses half resolution but its worth the traid off
+            _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(HalfValue * _secondClutchDepressedAmount + HalfValue), Axis.HID_USAGE_Z);
 
 
           
@@ -697,6 +727,14 @@ namespace AdvancedInput
                     {
                         text = "   Press the button\n      on the wheel\nthat you want to use";
                         sb.DrawString(_font, text, new Vector2(250, 250), Color.White, 0f, _font.MeasureString(text) * .5f, .9f, SpriteEffects.None, 0f);
+                        return;
+                    }
+
+                    if (_configState == ConfigArea.DetectClutch) //if wating for user to press a button display a promt
+                    {
+                        sb.Draw(_dot, new Rectangle(0, 0, 800, 500), Color.Black * .8f);
+                        sb.DrawString(_font, "Press button for second clutch mapping", new Vector2(250, 250), Color.White, 0f,
+                            _font.MeasureString("Press button for second clutch mapping") * .5f, .45f, SpriteEffects.None, 0f);
                         return;
                     }
 
@@ -768,6 +806,7 @@ namespace AdvancedInput
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
+                   
 
                     /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
                        if (_secondClutchButtonIndex == -1)
