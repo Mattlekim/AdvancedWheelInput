@@ -240,7 +240,7 @@ namespace AdvancedInput.UI
 
             if (_lockTillRelease)
             {
-                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]);
+                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]) > .5f;
                 if (!l)
                 {
                     _lockTillRelease = false;
@@ -251,7 +251,7 @@ namespace AdvancedInput.UI
 
             if (LockControles)
             {
-                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) && Wheel.IsWheelInputPressed(Wheel._secondClutchButtonIndex))
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) > .5f && Wheel.IsWheelInputPressed(Wheel._secondClutchButtonIndex) > .5f)
                 {
                     
                     _lockTillRelease = true;
@@ -261,21 +261,21 @@ namespace AdvancedInput.UI
             else
             {
                 _timeTillLock -= dt;
-                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]);
+                bool l = Wheel.IsWheelInputPressed(Wheel._directionButtons[0]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[1]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[2]) > .5f || Wheel.IsWheelInputPressed(Wheel._directionButtons[3]) > .5f;
                 if (l)
                     _timeTillLock = 60;
                 
                 if (_timeTillLock <= 0)
                     LockControles = true;
 
-                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]))
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]) > .5f)
                 {
                     if (Wheel._useNewReleaseMethord)
                         Wheel._secondClutchRelaseTime = 1f;
                     _sliderToChange--;
                 }
 
-                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]))
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]) > .5f)
                 {
                     if (Wheel._useNewReleaseMethord)
                         Wheel._secondClutchRelaseTime = 2f;
@@ -284,7 +284,7 @@ namespace AdvancedInput.UI
                 _sliderToChange = MathHelper.Clamp(_sliderToChange,0,1);
                 if (_sliderToChange == 0)
                 {
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]) > .5f)
                     {
                         
                         Wheel._secondClutchBitingPoint += .01f;
@@ -294,7 +294,7 @@ namespace AdvancedInput.UI
                         UpdateSliders();
                     }
 
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]))
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]) > .5f)
                     {
                         Wheel._secondClutchBitingPoint -= .01f;
                         Wheel._secondClutchBitingPoint = MathHelper.Clamp(Wheel._secondClutchBitingPoint, 0, 1);
@@ -304,7 +304,7 @@ namespace AdvancedInput.UI
                 }
                 if (_sliderToChange == 1)
                 {
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]))
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]) > .5f)
                     {
                         _slReleaseTime.Current += 0.01f;
                         _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);
@@ -315,7 +315,7 @@ namespace AdvancedInput.UI
                         // UpdateSliders();
                     }
 
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]))
+                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]) > .5f)
                     {
                         _slReleaseTime.Current -= 0.01f;
                         _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);

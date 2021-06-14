@@ -510,45 +510,53 @@ namespace AdvancedInput
             _secondClutchButton.SetReleaseState(_secondClutchRelaseTime);
         }
 
-        public bool IsWheelInputPressed(Input i)
+        public float IsWheelInputPressed(Input i)
         {
             if (i.Index == -1)
-                return false;
-
-            if (i.Type == InputType.Button)
+                return 0;
+            switch (i.Type)
             {
-                if (_inputWheel.Buttons != null)
-                    if (_inputWheel.Buttons.Length > 0 && i.Index >= 0 && i.Index < _inputWheel.Buttons.Length)
-                        if (_inputWheel.Buttons[i.Index] == ButtonState.Pressed)
-                            return true;
+                case InputType.Button:
+                    if (_inputWheel.Buttons != null)
+                        if (_inputWheel.Buttons.Length > 0 && i.Index >= 0 && i.Index < _inputWheel.Buttons.Length)
+                            if (_inputWheel.Buttons[i.Index] == ButtonState.Pressed)
+                                return 1;
+                    break;
 
+                case InputType.HatDown:
+                case InputType.HatLeft:
+                case InputType.HatRight:
+                case InputType.HatUp:
+                    if (_inputWheel.Hats != null)
+                        if (_inputWheel.Hats.Length > 0)
+                            if (i.Index >= 0 && i.Index < _inputWheel.Hats.Length)
+                            {
+                                if (i.Type == InputType.HatUp)
+                                    if (_inputWheel.Hats[i.Index].Up == ButtonState.Pressed)
+                                        return 1;
+
+                                if (i.Type == InputType.HatDown)
+                                    if (_inputWheel.Hats[i.Index].Down == ButtonState.Pressed)
+                                        return 1;
+
+                                if (i.Type == InputType.HatLeft)
+                                    if (_inputWheel.Hats[i.Index].Left == ButtonState.Pressed)
+                                        return 1;
+
+                                if (i.Type == InputType.HatRight)
+                                    if (_inputWheel.Hats[i.Index].Right == ButtonState.Pressed)
+                                        return 1;
+                            }
+                    break;
+                case InputType.Anolog:
+
+                    break;
             }
-            else
-            {
-                if (_inputWheel.Hats != null)
-                    if (_inputWheel.Hats.Length > 0)
-                        if (i.Index >= 0 && i.Index < _inputWheel.Hats.Length)
-                        {
-                            if (i.Type == InputType.HatUp)
-                                if (_inputWheel.Hats[i.Index].Up == ButtonState.Pressed)
-                                    return true;
 
-                            if (i.Type == InputType.HatDown)
-                                if (_inputWheel.Hats[i.Index].Down == ButtonState.Pressed)
-                                    return true;
 
-                            if (i.Type == InputType.HatLeft)
-                                if (_inputWheel.Hats[i.Index].Left == ButtonState.Pressed)
-                                    return true;
 
-                            if (i.Type == InputType.HatRight)
-                                if (_inputWheel.Hats[i.Index].Right == ButtonState.Pressed)
-                                    return true;
-                        }
-            }
-
-                return false;
-            }
+            return 0;
+        }
 
         JoystickState[] _oldStates = new JoystickState[8];
         public Input GetInputButton()
@@ -707,7 +715,7 @@ namespace AdvancedInput
             if (_inputWheel.Buttons != null) //check that the current input has buttons
                 if (_inputWheel.Buttons.Length > 0) //Make sure we have a button
                 {
-                   if (IsWheelInputPressed(_secondClutchButtonIndex))
+                   if (IsWheelInputPressed(_secondClutchButtonIndex) > .5f)
                             DepressSecondClutch(); //depresse the clutch
                 }
 
