@@ -549,11 +549,11 @@ namespace AdvancedInput
                             }
                     break;
                 case InputType.Anolog:
-
+                    if (_inputWheel.Axes != null)
+                        if (i.Index < _inputWheel.Axes.Length)
+                            return _inputWheel.Axes[i.Index] / MaxAxisValue;
                     break;
             }
-
-
 
             return 0;
         }
