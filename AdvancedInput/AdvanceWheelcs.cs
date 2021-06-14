@@ -550,6 +550,7 @@ namespace AdvancedInput
                 return false;
             }
 
+        JoystickState[] _oldStates = new JoystickState[8];
         public Input GetInputButton()
         {
             JoystickCapabilities jCapabilityes;
@@ -560,15 +561,12 @@ namespace AdvancedInput
                 if (jCapabilityes.IsConnected) //if is connectec
                 {
                     jState = Joystick.GetState(i); //get its state
-                    if (jCapabilityes.ButtonCount > 0) //make sure it has buttons
-                    {
-                        
-                        for (int c = 0; c < jCapabilityes.ButtonCount; c++)
-                            if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
-                            {
-                                return c;
-                            }
-                    }
+
+                    for (int c = 0; c < jCapabilityes.ButtonCount; c++)
+                        if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
+                        {
+                            return c;
+                        }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
                     {
@@ -584,6 +582,19 @@ namespace AdvancedInput
                         if (jState.Hats[c].Right == ButtonState.Pressed)
                             return new Input(InputType.HatRight, c);
                     }
+
+
+                    for (int a = 0; a < jCapabilityes.AxisCount; a++)
+                    {
+                        if (_oldStates[i].Axes != null && _oldStates[i].Axes.Length > 0)
+                            if (MathHelper.Distance(jState.Axes[a], _oldStates[i].Axes[a]) > 1000) //if more than half pressed
+                            {
+                                _oldStates[i] = jState;
+                                return new Input(InputType.Anolog, a);
+                            }
+                    }
+
+                    _oldStates[i] = jState;
                 }
             }
             return -1;
