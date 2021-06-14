@@ -151,7 +151,7 @@ namespace AdvancedInput
             {
                 if (SpeedMph > 0.02f)
                 {
-                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex))
+                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex) > .5f)
                         _holdTime += dt;
                     if (SpeedMph >= 60)
                     {
