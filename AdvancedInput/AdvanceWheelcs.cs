@@ -612,22 +612,22 @@ namespace AdvancedInput
                     for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                         if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                         {
-                            return new Input(InputType.Button, c, jCapabilityes.Identifier,i);
+                            return new Input(InputType.Button, c, jCapabilityes.Identifier);
                         }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
                     {
                         if (jState.Hats[c].Up == ButtonState.Pressed)
-                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier,i);
+                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Down == ButtonState.Pressed)
-                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier, i);
+                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Left == ButtonState.Pressed)
-                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier, i);
+                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Right == ButtonState.Pressed)
-                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier, i);
+                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier);
                     }
 
 
@@ -637,7 +637,7 @@ namespace AdvancedInput
                             if (MathHelper.Distance(jState.Axes[a], _oldStates[i].Axes[a]) > 1000) //if more than half pressed
                             {
                                 _oldStates[i] = jState;
-                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier, i);
+                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier);
                             }
                     }
 
@@ -933,7 +933,9 @@ namespace AdvancedInput
                         {
                             _inputWheelIdentifyer = reader.ReadAttributeString("InputId");
 
-                            _secondClutchButtonIndex = new Input(reader.ReadAttributeEnum<InputType>("SecondClutchInputType"), reader.ReadAttributeInt("SecondClutchInputIndex"), reader.ReadAttributeInt("SecondClutchInputDeviceId"));
+                            ///this is for a temperary fix untill i move compleately over to the new system
+                            string tmp = reader.ReadAttributeString("SecondClutchInputDeviceId");
+                            _secondClutchButtonIndex = new Input(reader.ReadAttributeEnum<InputType>("SecondClutchInputType"), reader.ReadAttributeInt("SecondClutchInputIndex"), tmp);
 
                             _secondClutchBitingPoint = reader.ReadAttributeFloat("SecondClutchBite");
                             _secondClutchRelaseTime = reader.ReadAttributeFloat("SecondClutchReleaseTime");
@@ -941,19 +943,19 @@ namespace AdvancedInput
 
                             InputType t = reader.ReadAttributeEnum<InputType>("InputUpType");
                             int i = reader.ReadAttributeInt("InputUpIndex");
-                            _directionButtons[(int)CardinalDirection.Up] = new Input(t, i);
+                            _directionButtons[(int)CardinalDirection.Up] = new Input(t, i, tmp);
 
                             t = reader.ReadAttributeEnum<InputType>("InputDownType");
                             i = reader.ReadAttributeInt("InputDownIndex");
-                            _directionButtons[(int)CardinalDirection.Down] = new Input(t, i);
+                            _directionButtons[(int)CardinalDirection.Down] = new Input(t, i, tmp);
 
                             t = reader.ReadAttributeEnum<InputType>("InputLeftType");
                             i = reader.ReadAttributeInt("InputLeftIndex");
-                            _directionButtons[(int)CardinalDirection.Left] = new Input(t, i);
+                            _directionButtons[(int)CardinalDirection.Left] = new Input(t, i, tmp);
 
                             t = reader.ReadAttributeEnum<InputType>("InputRightType");
                             i = reader.ReadAttributeInt("InputRightIndex");
-                            _directionButtons[(int)CardinalDirection.Right] = new Input(t, i);
+                            _directionButtons[(int)CardinalDirection.Right] = new Input(t, i, tmp);
 
                             AutoLoadFastestSetup = reader.ReadAttributeBool("AutoLoadBestSetup");
                             TimesOnlyMode = reader.ReadAttributeBool("TimingsOnlyMode");
