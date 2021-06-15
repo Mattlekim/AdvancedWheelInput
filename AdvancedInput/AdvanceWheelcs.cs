@@ -524,7 +524,7 @@ namespace AdvancedInput
             for (int i =0; i < 8; i++)
             {
                 jCap = Joystick.GetCapabilities(i);
-                if (_secondClutchButtonIndex.InputId == jCap.Identifier) //if we find the correct input device
+                if (_secondClutchButtonIndex.InputID == jCap.Identifier) //if we find the correct input device
                 {
                     _usedInputDevices.Add(i); //add this to the list of inputs to check against
                     continue;
@@ -892,6 +892,8 @@ namespace AdvancedInput
                 writer.WriteAttributeString("InputId", _inputWheelIdentifyer);
                 writer.WriteAttributeEnum<InputType>("SecondClutchInputType", _secondClutchButtonIndex.Type);
                 writer.WriteAttributeInt("SecondClutchInputIndex", _secondClutchButtonIndex.Index);
+                writer.WriteAttributeString("SecondClutchInputDeviceId", _secondClutchButtonIndex.InputID);
+
                 writer.WriteAttributeFloat("SecondClutchBite", _secondClutchBitingPoint);
                 writer.WriteAttributeFloat("SecondClutchReleaseTime", _secondClutchRelaseTime);
 
@@ -931,7 +933,7 @@ namespace AdvancedInput
                         {
                             _inputWheelIdentifyer = reader.ReadAttributeString("InputId");
 
-                            _secondClutchButtonIndex = new Input(reader.ReadAttributeEnum<InputType>("SecondClutchInputType"), reader.ReadAttributeInt("SecondClutchInputIndex"));
+                            _secondClutchButtonIndex = new Input(reader.ReadAttributeEnum<InputType>("SecondClutchInputType"), reader.ReadAttributeInt("SecondClutchInputIndex"), reader.ReadAttributeInt("SecondClutchInputDeviceId"));
 
                             _secondClutchBitingPoint = reader.ReadAttributeFloat("SecondClutchBite");
                             _secondClutchRelaseTime = reader.ReadAttributeFloat("SecondClutchReleaseTime");
