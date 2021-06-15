@@ -510,10 +510,41 @@ namespace AdvancedInput
             _secondClutchButton.SetReleaseState(_secondClutchRelaseTime);
         }
 
+        /// <summary>
+        /// there is no point in checking every joystick input every update frame
+        /// so we will catch the ones we need to update
+        /// </summary>
+        private List<int> _usedInputDevices = new List<int>();
+
+        public void LoadAllInputDevices()
+        {
+            _usedInputDevices.Clear();
+
+            JoystickCapabilities jCap;
+            for (int i =0; i < 8; i++)
+            {
+                jCap = Joystick.GetCapabilities(i);
+                if (_secondClutchButtonIndex.InputId == jCap.Identifier) //if we find the correct input device
+                {
+                    _usedInputDevices.Add(i); //add this to the list of inputs to check against
+                    continue;
+                }
+            }
+        }
+
+        /// <summary>
+        /// checks the input
+        /// </summary>
+        /// <param name="i">the input to check</param>
+        /// <returns>returns 0 to 1 0 .5> is true</returns>
         public float IsWheelInputPressed(Input i)
         {
-            if (i.Index == -1)
+            if (i.InputDeviceIndex <= 0) //if no input device
                 return 0;
+            if (i.Index == -1) //if the input button / axis is null
+                return 0;
+
+            
             switch (i.Type)
             {
                 case InputType.Button:
@@ -558,7 +589,15 @@ namespace AdvancedInput
             return 0;
         }
 
+        
+        /// <summary>
+        /// the old Joystick states
+        /// </summary>
         JoystickState[] _oldStates = new JoystickState[8];
+        /// <summary>
+        /// the new joystick states
+        /// </summary>
+        JoystickState[] _currentStates = new JoystickState[8];
         public Input GetInputButton()
         {
             JoystickCapabilities jCapabilityes;
@@ -573,22 +612,22 @@ namespace AdvancedInput
                     for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                         if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                         {
-                            return new Input(InputType.Button, c, jCapabilityes.Identifier);
+                            return new Input(InputType.Button, c, jCapabilityes.Identifier,i);
                         }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
                     {
                         if (jState.Hats[c].Up == ButtonState.Pressed)
-                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier,i);
 
                         if (jState.Hats[c].Down == ButtonState.Pressed)
-                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier, i);
 
                         if (jState.Hats[c].Left == ButtonState.Pressed)
-                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier, i);
 
                         if (jState.Hats[c].Right == ButtonState.Pressed)
-                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier, i);
                     }
 
 
@@ -598,7 +637,7 @@ namespace AdvancedInput
                             if (MathHelper.Distance(jState.Axes[a], _oldStates[i].Axes[a]) > 1000) //if more than half pressed
                             {
                                 _oldStates[i] = jState;
-                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier);
+                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier, i);
                             }
                     }
 
