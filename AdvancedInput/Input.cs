@@ -13,17 +13,18 @@ namespace AdvancedInput
     {
         public InputType Type;
         public int Index;
-
+        public string WheelId;
        
-        public Input(InputType t, int i)
+        public Input(InputType t, int i, string wheelId)
         {
             Type = t;
             Index = i;
+            WheelId = wheelId;
         }
 
         public static implicit operator Input(int i)
         {
-            return new Input(InputType.Button, i);
+            return new Input(InputType.Button, i, string.Empty);
         }
 
    
