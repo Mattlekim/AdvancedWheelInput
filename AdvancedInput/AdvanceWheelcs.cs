@@ -573,22 +573,22 @@ namespace AdvancedInput
                     for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                         if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                         {
-                            return c;
+                            return new Input(InputType.Button, c, jCapabilityes.Identifier);
                         }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
                     {
                         if (jState.Hats[c].Up == ButtonState.Pressed)
-                            return new Input(InputType.HatUp, c);
+                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Down == ButtonState.Pressed)
-                            return new Input(InputType.HatDown, c);
+                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Left == ButtonState.Pressed)
-                            return new Input(InputType.HatLeft, c);
+                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier);
 
                         if (jState.Hats[c].Right == ButtonState.Pressed)
-                            return new Input(InputType.HatRight, c);
+                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier);
                     }
 
 
@@ -598,7 +598,7 @@ namespace AdvancedInput
                             if (MathHelper.Distance(jState.Axes[a], _oldStates[i].Axes[a]) > 1000) //if more than half pressed
                             {
                                 _oldStates[i] = jState;
-                                return new Input(InputType.Anolog, a);
+                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier);
                             }
                     }
 
