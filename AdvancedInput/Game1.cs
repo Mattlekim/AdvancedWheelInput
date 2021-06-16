@@ -41,7 +41,7 @@ namespace AdvancedInput
             Components.Add(new KeyboardAPI(this));
             Components.Add(new IRacingTelemitry(this));
             float tet = 1f / 80f;
-            this.TargetElapsedTime = new System.TimeSpan(0,0,0,0, (int)(tet * 1000));
+           // this.TargetElapsedTime = new System.TimeSpan(0,0,0,0, (int)(tet * 1000));
             //KeyboardAPI.Active
             base.Initialize();
         }

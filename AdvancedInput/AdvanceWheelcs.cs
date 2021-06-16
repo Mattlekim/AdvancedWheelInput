@@ -47,7 +47,7 @@ namespace AdvancedInput
         private float _clutchReleaseTimeStart = 0;
 
         //the current state of the wheel
-        private WheelState _currentState = WheelState.Config; //set to config by default
+        private WheelState _currentState = WheelState.Run; //set to config by default
         //the type of config state
         private ConfigArea _configState = ConfigArea.DetectJoystickInput; //set to detect input by default
 
@@ -85,19 +85,8 @@ namespace AdvancedInput
         internal Input[] _directionButtons = new Input[4] { -1, -1, -1, -1 };
 
         private CardinalDirection _inputDirection = CardinalDirection.None;
-        /// <summary>
-        /// the wheel input
-        /// </summary>
-        internal JoystickState _inputWheel;
-        /// <summary>
-        ///  the wheel index
-        /// </summary>
-        private Input _inputWheelIndex = -1;
-        /// <summary>
-        /// it id for the wheel so when we reload we can make sure we have the correct one
-        /// we do this incase winodws loads in the gamepads in a different order
-        /// </summary>
-        private string _inputWheelIdentifyer = string.Empty;
+        
+    
 
         /// <summary>
         /// our virtual joystick
@@ -521,14 +510,18 @@ namespace AdvancedInput
             _usedInputDevices.Clear();
 
             JoystickCapabilities jCap;
-            for (int i =0; i < 8; i++)
+
+
+
+            if (!_usedInputDevices.Contains(_secondClutchButtonIndex.InputDeviceIndex) && _secondClutchButtonIndex.InputDeviceIndex >= 0)
+                _usedInputDevices.Add(_secondClutchButtonIndex.InputDeviceIndex); //add this to the list of inputs to check against
+
+
+            foreach (Input input in _directionButtons)
             {
-                jCap = Joystick.GetCapabilities(i);
-                if (_secondClutchButtonIndex.InputID == jCap.Identifier) //if we find the correct input device
-                {
-                    _usedInputDevices.Add(i); //add this to the list of inputs to check against
-                    continue;
-                }
+                if (!_usedInputDevices.Contains(input.InputDeviceIndex) && input.InputDeviceIndex >= 0)
+                    _usedInputDevices.Add(input.InputDeviceIndex); //add this to the list of inputs to check against
+
             }
         }
 
@@ -544,6 +537,7 @@ namespace AdvancedInput
             if (i.Index == -1) //if the input button / axis is null
                 return 0;
 
+            JoystickState _inputWheel = _currentJoystickStates[i.InputDeviceIndex];
             
             switch (i.Type)
             {
@@ -593,11 +587,11 @@ namespace AdvancedInput
         /// <summary>
         /// the old Joystick states
         /// </summary>
-        JoystickState[] _oldStates = new JoystickState[8];
+        JoystickState[] _oldJoystickStates = new JoystickState[8];
         /// <summary>
         /// the new joystick states
         /// </summary>
-        JoystickState[] _currentStates = new JoystickState[8];
+        JoystickState[] _currentJoystickStates = new JoystickState[8];
         public Input GetInputButton()
         {
             JoystickCapabilities jCapabilityes;
@@ -612,36 +606,50 @@ namespace AdvancedInput
                     for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                         if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                         {
+                            _oldJoystickStates[i] = jState;
                             return new Input(InputType.Button, c, jCapabilityes.Identifier);
                         }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
                     {
                         if (jState.Hats[c].Up == ButtonState.Pressed)
+                        {
+                            _oldJoystickStates[i] = jState;
                             return new Input(InputType.HatUp, c, jCapabilityes.Identifier);
+                        }
 
                         if (jState.Hats[c].Down == ButtonState.Pressed)
+                        {
+                            _oldJoystickStates[i] = jState;
                             return new Input(InputType.HatDown, c, jCapabilityes.Identifier);
+                        }
 
                         if (jState.Hats[c].Left == ButtonState.Pressed)
+                        {
+                            _oldJoystickStates[i] = jState;
                             return new Input(InputType.HatLeft, c, jCapabilityes.Identifier);
+                        }
 
                         if (jState.Hats[c].Right == ButtonState.Pressed)
+                        {
+                            _oldJoystickStates[i] = jState;
                             return new Input(InputType.HatRight, c, jCapabilityes.Identifier);
+                        }
                     }
 
 
                     for (int a = 0; a < jCapabilityes.AxisCount; a++)
                     {
-                        if (_oldStates[i].Axes != null && _oldStates[i].Axes.Length > 0)
-                            if (MathHelper.Distance(jState.Axes[a], _oldStates[i].Axes[a]) > 1000) //if more than half pressed
+                        if (_oldJoystickStates[i].Axes != null && _oldJoystickStates[i].Axes.Length > 0)
+                            if (MathHelper.Distance(jState.Axes[a], _oldJoystickStates[i].Axes[a]) > 1000) //if more than half pressed
                             {
-                                _oldStates[i] = jState;
+                                _oldJoystickStates[i] = jState;
                                 return new Input(InputType.Anolog, a, jCapabilityes.Identifier);
                             }
                     }
 
-                    _oldStates[i] = jState;
+                   
+                    
                 }
             }
             return -1;
@@ -655,41 +663,17 @@ namespace AdvancedInput
 
                 return;
             }
-            //see if we dont have a id for the input wheel
-            //in this case we need to run the start up sequence
-            if (_inputWheelIdentifyer == string.Empty) 
-            {
-                JoystickCapabilities jCapabilityes;
-                JoystickState jState;
-                for (int i = 0; i < 8; i++) //loop though all joystics
-                {
-                    jCapabilityes = Joystick.GetCapabilities(i); //get joystick capabilitys
-                    if (jCapabilityes.IsConnected) //if is connectec
-                        if (jCapabilityes.ButtonCount > 0) //make sure it has buttons
-                        {
-                            jState = Joystick.GetState(i); //get its state
-                            for (int c = 0; c < jCapabilityes.ButtonCount; c++)
-                                if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
-                                {
-                                    _inputWheelIdentifyer = jCapabilityes.Identifier; //set this as the wheel
-                                    _inputWheelIndex = i; //set the index for this input
-                                    _currentState = WheelState.Run; //change app to run mode
-                                    SaveConfig(); //save the config
-                                    return;
-                                }
-                        }
-                }
 
-                return;
+            //set old state
+            for (int i = 0; i < 8; i++)
+            {
+                _oldJoystickStates[i] = _currentJoystickStates[i];
+                _currentJoystickStates[i] = Joystick.GetState(i);
             }
 
-            if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
-            {
-
-
-                return;
-            }
-            _inputWheel = Joystick.GetState(_inputWheelIndex.Index); //get the input
+            //get all reaquid inputs
+//            for (int i = 0; i < _usedInputDevices.Count; i++)
+  //              _currentJoystickStates[_usedInputDevices[i]] = Joystick.GetState(_usedInputDevices[i]);
 
             switch (_currentState)
             {
@@ -697,7 +681,7 @@ namespace AdvancedInput
                     foreach (UiEliment b in _uiElements)
                         b.Update(dt);
 
-                 
+
                     break;
 
                 case WheelState.Config:
@@ -751,14 +735,12 @@ namespace AdvancedInput
 
             //================DISPLAY AN ERROR MSG IF NO BUTTONS FOR USER TO KNOW THERE IS A PROBLEM=================
 
-            if (_inputWheel.Buttons != null) //check that the current input has buttons
-                if (_inputWheel.Buttons.Length > 0) //Make sure we have a button
-                {
-                   if (IsWheelInputPressed(_secondClutchButtonIndex) > .5f)
-                            DepressSecondClutch(); //depresse the clutch
-                }
 
-                    
+            if (IsWheelInputPressed(_secondClutchButtonIndex) > .5f)
+                DepressSecondClutch(); //depresse the clutch
+
+
+
             _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchDepressedAmount, 0, 1); //standard clamp
 
             //update the virtual joystick
@@ -770,7 +752,7 @@ namespace AdvancedInput
             _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(HalfValue * _secondClutchDepressedAmount + HalfValue), Axis.HID_USAGE_Z);
 
 
-          
+
         }
 
 
@@ -854,13 +836,6 @@ namespace AdvancedInput
                     }
 
 
-                    if (_inputWheelIndex.Index == -1) //check to make sure we have an input device
-                    {
-                        sb.DrawString(_font, "Your Input device cannot be found", new Vector2(400, 220), Color.White, 0f, _font.MeasureString("Your Input device cannot be found") * .5f, .9f, SpriteEffects.None, 0f);
-                        sb.DrawString(_font, "Pleae check your Connection and restart this app.", new Vector2(400, 270), Color.White, 0f, _font.MeasureString("Pleae check your Connection and restart this app.") * .5f, .6f, SpriteEffects.None, 0f);
-                        return;
-                    }
-
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
@@ -889,7 +864,6 @@ namespace AdvancedInput
 
                 writer.WriteStartElement("Config");
 
-                writer.WriteAttributeString("InputId", _inputWheelIdentifyer);
                 writer.WriteAttributeEnum<InputType>("SecondClutchInputType", _secondClutchButtonIndex.Type);
                 writer.WriteAttributeInt("SecondClutchInputIndex", _secondClutchButtonIndex.Index);
                 writer.WriteAttributeString("SecondClutchInputDeviceId", _secondClutchButtonIndex.InputID);
@@ -899,12 +873,19 @@ namespace AdvancedInput
 
                 writer.WriteAttributeEnum<InputType>("InputUpType", _directionButtons[(int)CardinalDirection.Up].Type);
                 writer.WriteAttributeInt("InputUpIndex", _directionButtons[(int)CardinalDirection.Up].Index);
+                writer.WriteAttributeString("InputUpIndexDeviceId", _directionButtons[(int)CardinalDirection.Up].InputID);
+
                 writer.WriteAttributeEnum<InputType>("InputDownType", _directionButtons[(int)CardinalDirection.Down].Type);
                 writer.WriteAttributeInt("InputDownIndex", _directionButtons[(int)CardinalDirection.Down].Index);
+                writer.WriteAttributeString("InputDownIndexInputDeviceId", _directionButtons[(int)CardinalDirection.Down].InputID);
+
                 writer.WriteAttributeEnum<InputType>("InputLeftType", _directionButtons[(int)CardinalDirection.Left].Type);
                 writer.WriteAttributeInt("InputLeftIndex", _directionButtons[(int)CardinalDirection.Left].Index);
+                writer.WriteAttributeString("InputLeftTypeInputDeviceId", _directionButtons[(int)CardinalDirection.Left].InputID);
+
                 writer.WriteAttributeEnum<InputType>("InputRightType", _directionButtons[(int)CardinalDirection.Right].Type);
                 writer.WriteAttributeInt("InputRightIndex", _directionButtons[(int)CardinalDirection.Right].Index);
+                writer.WriteAttributeString("InputRightTypeInputDeviceId", _directionButtons[(int)CardinalDirection.Right].InputID);
 
                 writer.WriteAttributeBool("AutoLoadBestSetup", AutoLoadFastestSetup);
                 writer.WriteAttributeBool("TimingsOnlyMode", TimesOnlyMode);
@@ -931,7 +912,7 @@ namespace AdvancedInput
                     {
                         if (reader.Name == "Config")
                         {
-                            _inputWheelIdentifyer = reader.ReadAttributeString("InputId");
+                        
 
                             ///this is for a temperary fix untill i move compleately over to the new system
                             string tmp = reader.ReadAttributeString("SecondClutchInputDeviceId");
@@ -943,19 +924,19 @@ namespace AdvancedInput
 
                             InputType t = reader.ReadAttributeEnum<InputType>("InputUpType");
                             int i = reader.ReadAttributeInt("InputUpIndex");
-                            _directionButtons[(int)CardinalDirection.Up] = new Input(t, i, tmp);
+                            _directionButtons[(int)CardinalDirection.Up] = new Input(t, i, reader.ReadAttributeString("InputUpIndexDeviceId"));
 
                             t = reader.ReadAttributeEnum<InputType>("InputDownType");
                             i = reader.ReadAttributeInt("InputDownIndex");
-                            _directionButtons[(int)CardinalDirection.Down] = new Input(t, i, tmp);
+                            _directionButtons[(int)CardinalDirection.Down] = new Input(t, i, reader.ReadAttributeString("InputDownIndexInputDeviceId"));
 
                             t = reader.ReadAttributeEnum<InputType>("InputLeftType");
                             i = reader.ReadAttributeInt("InputLeftIndex");
-                            _directionButtons[(int)CardinalDirection.Left] = new Input(t, i, tmp);
+                            _directionButtons[(int)CardinalDirection.Left] = new Input(t, i, reader.ReadAttributeString("InputLeftIndexInputDeviceId"));
 
                             t = reader.ReadAttributeEnum<InputType>("InputRightType");
                             i = reader.ReadAttributeInt("InputRightIndex");
-                            _directionButtons[(int)CardinalDirection.Right] = new Input(t, i, tmp);
+                            _directionButtons[(int)CardinalDirection.Right] = new Input(t, i, reader.ReadAttributeString("InputRightIndexInputDeviceId"));
 
                             AutoLoadFastestSetup = reader.ReadAttributeBool("AutoLoadBestSetup");
                             TimesOnlyMode = reader.ReadAttributeBool("TimingsOnlyMode");
@@ -969,23 +950,11 @@ namespace AdvancedInput
             }
             catch
             {
-                _inputWheelIdentifyer = string.Empty;
-                _inputWheelIndex = -1;
+               
                 _secondClutchButtonIndex = -1;
             }
 
-            for (int i =0; i < 8; i++)
-            {
-                JoystickCapabilities jc = Joystick.GetCapabilities(i);
-              //  if (jc == null)
-                  //  continue;
-
-                if (jc.Identifier == _inputWheelIdentifyer) //if we find the wheel we are using 
-                {
-                    _inputWheelIndex = i;
-                    break;
-                }
-            }
+            LoadAllInputDevices();
 
             ///update the buttons to the correct state
             

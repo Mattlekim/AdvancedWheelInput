@@ -15,11 +15,6 @@ namespace AdvancedInput.UI
     /// </summary>
     public class SecondClutchButton : Button
     {
-        /// <summary>
-        /// flag for waiting for user to press a button to assign to second clutch
-        /// </summary>
-        private bool DetectSecondClutchInput = false;
-
         //sliders for biting point and relase time
         private Slider _slBitingPoint;
         private Slider _slReleaseTime;
@@ -204,8 +199,7 @@ namespace AdvancedInput.UI
             if (_flasher > 1)
                 _flasher -= 2; //limit it to -1 to 1
 
-            if (Wheel._inputWheel.Buttons == null)  //check that the current input wheel has buttons
-                return;
+          /*
 
 
             if (DetectSecondClutchInput) //if we are waiting to detect a button press for clutch
@@ -222,6 +216,7 @@ namespace AdvancedInput.UI
                 }
             }
 
+            */
 
             //  if (Wheel._telemitry.IsConnected)
             if (SimpleMouse.IsLButtonClick)
@@ -268,17 +263,28 @@ namespace AdvancedInput.UI
                 if (_timeTillLock <= 0)
                     LockControles = true;
 
-                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]) > .5f)
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Left]) > .5f) //slow relase
                 {
                     if (Wheel._useNewReleaseMethord)
-                        Wheel._secondClutchRelaseTime = 1f;
+                    {
+                        Wheel._secondClutchRelaseTime = 2f;
+                        _bntSlowRelease.ResetButtonState();
+                        _bntFastRelease.ResetButtonState();
+                        _bntSlowRelease.SetPressed();
+                    }
                     _sliderToChange--;
                 }
 
-                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]) > .5f)
+                if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Right]) > .5f) //fast relase
                 {
                     if (Wheel._useNewReleaseMethord)
-                        Wheel._secondClutchRelaseTime = 2f;
+                    {
+                        Wheel._secondClutchRelaseTime = .5f;
+
+                        _bntSlowRelease.ResetButtonState();
+                        _bntFastRelease.ResetButtonState();
+                        _bntFastRelease.SetPressed();
+                    }
                     _sliderToChange++;
                 }
                 _sliderToChange = MathHelper.Clamp(_sliderToChange,0,1);
@@ -340,8 +346,7 @@ namespace AdvancedInput.UI
         {
             if (!_active)
                 return;
-            if (Wheel._secondClutchButtonIndex.Index == -1)
-                DetectSecondClutchInput = true;
+            
 
         }
 
@@ -361,19 +366,15 @@ namespace AdvancedInput.UI
 
 
 
-                if (DetectSecondClutchInput) //if wating for user to press a button display a promt
-                    sb.DrawString(Wheel._font, "Press button for second clutch mapping", new Vector2(250, 250), Color.White * (_flasher * _flasher), 0f,
-                        Wheel._font.MeasureString("Press button for second clutch mapping") * .5f, .45f, SpriteEffects.None, 0f);
-                else
-                {
-                    //standard text layout
-                    sb.DrawString(Wheel._font, "Clutch", new Vector2(10, 10), Color.White);
-                    sb.DrawString(Wheel._font, "Click to set up", new Vector2(110, 165), Color.White * (.5f), 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                    sb.Draw(Wheel._iconConfig, new Vector2(300, 105), null, Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
-                }
+                base.Draw(sb);
+                sb.Draw(Dot, new Rectangle(0, 0, 500, 400), Color.Black * .8f);
+                sb.DrawString(Wheel._font, "Second Clutch Needs", new Vector2(10, 145), Color.White , 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Wheel._font, "Setting up", new Vector2(80, 175), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                
+
                 return;
             }
-           
+
 
             if (LockControles)
             {
