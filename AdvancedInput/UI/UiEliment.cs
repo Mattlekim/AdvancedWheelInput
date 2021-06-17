@@ -50,6 +50,8 @@ namespace AdvancedInput.UI
 
 
         public Action<UiEliment> OnActive;
+
+        public bool IsActive { get { return _active; } }
         /// <summary>
         /// weather the compoante is active or not
         /// </summary>

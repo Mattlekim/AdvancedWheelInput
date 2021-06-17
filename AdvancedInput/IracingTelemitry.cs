@@ -13,41 +13,73 @@ using Riddlersoft.Core.Xml;
 namespace AdvancedInput
 {
 
-
+    /// <summary>
+    /// the telemitry class is what does all the work with getting all the relervent iracing data
+    /// </summary>
     class IRacingTelemitry : GameComponent
     {
 
+        /// <summary>
+        /// the speed in miles per hour
+        /// </summary>
         public float SpeedMph { get; private set; }
 
+        /// <summary>
+        /// if we are connect to telemitory or not
+        /// </summary>
         public bool IsConnected { get; private set; } = false;
         private float _timeSinceGotData = 5f;
 
+        /// <summary>
+        /// name of current car
+        /// </summary>
         public string CurrentCar { get; private set; }
 
         public List<TimeRecord> TimeRecords = new List<TimeRecord>();
+        /// <summary>
+        /// runs on connection to iracing
+        /// </summary>
         public Action OnConnected;
+        /// <summary>
+        /// runs on disconneced from iracing
+        /// </summary>
         public Action OnDisconected;
 
+        /// <summary>
+        /// the advance wheel
+        /// </summary>
         private AdvanceWheel _wheel;
         public IRacingTelemitry(Game game) : base(game)
         {
-            iRacing.NewData += iRacing_NewData;
-            iRacing.StartListening();
+            iRacing.NewData += iRacing_NewData; //set get new data function
+            iRacing.StartListening(); //start listing to iracing
             OnConnected += OnConnect;
         }
 
+        /// <summary>
+        /// when 0 to 60 is reachead
+        /// </summary>
         public Action<TimeRecord> On0To60;
+
+        /// <summary>
+        /// reset the times
+        /// </summary>
         public void ClearCurrentCarTimes()
         {
             TimeRecords.Clear();
         }
+        /// <summary>
+        /// add new record to the time list
+        /// </summary>
         public void AddTimeRecord0To60()
         {
+            //make sure we can add
             if (CurrentCar == null || CurrentCar == string.Empty)
                 return;
 
-            if (TimeRecords.Count >= 21)
+            if (TimeRecords.Count >= 21) //if we where over the limint of what can be listed
             {
+                //find the worst score and delete it
                 float lowert = float.MinValue;
                 int index = -1;
 
@@ -62,24 +94,36 @@ namespace AdvancedInput
                     TimeRecords.RemoveAt(index);
             }
 
+            //create the record
             TimeRecord tr = new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime, _holdTime)
             {
                 WasClutchStart = _usedSecondClutch,
             };
 
+            //add the record
             TimeRecords.Add(tr);
 
+            //trigger the 0 to 60
             if (On0To60 != null)
                 On0To60(tr);
 
+            //save telimtory data
             SaveTelimtory();
         }
 
+        /// <summary>
+        /// add the time for 0 to 100
+        /// </summary>
         public void AddTimeRecord0To100()
         {
             TimeRecords[TimeRecords.Count - 1].ZeroToOnehundrand = _0to60Time;
             SaveTelimtory();
         }
+
+        /// <summary>
+        /// set the advanced wheel
+        /// </summary>
+        /// <param name="wheel"></param>
         public void SetWheel(AdvanceWheel wheel)
         {
             _wheel = wheel;

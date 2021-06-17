@@ -964,7 +964,10 @@ namespace AdvancedInput
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
-                   
+                  
+                    if (_useRealSecondClutch) //if using real clutch hide the release settings
+                        if (_uiElements[1].IsActive)
+                            sb.Draw(_dot, new Rectangle(180, 80, 100, 220), new Color(51,64,69));
 
                     /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
                        if (_secondClutchButtonIndex == -1)
