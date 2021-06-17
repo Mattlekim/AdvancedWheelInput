@@ -68,12 +68,14 @@ namespace AdvancedInput.UI
             if (Locked)
                 return;
 
-            if (OnActive != null)
-                OnActive(this);
+            
 
             _activateNextUpdate = true;
             foreach (UiEliment ui in Elements)
                 ui.Activate();
+
+            if (OnActive != null)
+                OnActive(this);
         }
 
         public void Deactive()
@@ -81,6 +83,7 @@ namespace AdvancedInput.UI
             if (Locked)
                 return;
 
+            _activateNextUpdate = false;
             _active = false;
             foreach (UiEliment ui in Elements)
                 ui.Deactive();

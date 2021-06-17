@@ -91,6 +91,9 @@ namespace AdvancedInput
         /// </summary>
         internal Input[] _directionButtons = new Input[4] { -1, -1, -1, -1 };
 
+        /// <summary>
+        /// used for settings page knowing which input we are currently working with for the direciotn buttons
+        /// </summary>
         private CardinalDirection _inputDirection = CardinalDirection.None;
         
     
@@ -105,6 +108,10 @@ namespace AdvancedInput
         /// the font for displaying text
         /// </summary>
         internal SpriteFont _font;
+
+        /// <summary>
+        /// simple texture of the config button
+        /// </summary>
         internal Texture2D _iconConfig;
 
         /// <summary>
@@ -112,6 +119,9 @@ namespace AdvancedInput
         /// </summary>
         private Texture2D _dot;
 
+        /// <summary>
+        /// the parent device
+        /// </summary>
         private Game _game;
 
         /// <summary>
@@ -128,6 +138,16 @@ namespace AdvancedInput
         private bool _validVJoyConnection = true;
 
         private float _newReleaseClutchBitingPointCatch;
+
+        /// <summary>
+        /// if we have a real second clutch we can use that input instead of trying to emulate the release of a fake one
+        /// </summary>
+        internal float _realSecondClutchInputAmount;
+
+        /// <summary>
+        /// if to use a real clutch or not
+        /// </summary>
+        internal bool _useRealSecondClutch;
         private Random _rd = new Random();
         /// <summary>
         /// depress the second clutch
@@ -201,7 +221,7 @@ namespace AdvancedInput
             }
 
             LoadConfig(); //try to load the config
-          
+            
             _surfaceSettings = new Surface()
             {
                 TextName = "Settings",
@@ -211,7 +231,7 @@ namespace AdvancedInput
                 {
                     Surface s = sender as Surface;
 
-                    Button b = s.Elements[5] as Button; //get auto load button
+                    Button b = s.Elements[6] as Button; //get auto load button
                     b.ResetButtonState();
                     if (AutoLoadFastestSetup)
                         b.SetPressed();
@@ -240,6 +260,18 @@ namespace AdvancedInput
 
                     b = s.Elements[9] as Button; //get the speak button
                     b.Depressed = SayTimingOutloud;
+
+                    b = s.Elements[10] as Button;
+                    b.Depressed = _useRealSecondClutch;
+
+                    if (_secondClutchButtonIndex.Type == InputType.Anolog & !TimesOnlyMode)
+                        b.Activate();
+                    else
+                    {
+                        b.Deactive();
+                        _useRealSecondClutch = false;
+                    }
+                   
                 }
             };
            
@@ -369,6 +401,10 @@ namespace AdvancedInput
                 OnClick = (Button b) =>
                 {
                     TimesOnlyMode = b.Depressed;
+
+                    //use this to refresh the settings
+                    _surfaceSettings.Deactive();
+                    _surfaceSettings.Activate();
                 }
             });
 
@@ -402,6 +438,20 @@ namespace AdvancedInput
                 {
 
                     SayTimingOutloud = b.Depressed;
+                }
+            });
+
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(350, 210, 125, 75))
+            {
+                PrimaryColour = Color.Orange * .2f,
+                SecondryColour = Color.Orange,
+                ButtonText = " Use Real\n   Clutch",
+                TextColour = Color.White,
+                TextScale = .5f,
+                Sticky = true,
+                OnClick = (Button b) =>
+                {
+                   _useRealSecondClutch = b.Depressed;
                 }
             });
 
@@ -508,7 +558,7 @@ namespace AdvancedInput
                         }
                     }
 
-                    if (b.ButtonText.Contains("Clutch"))
+                    if (b.ButtonText.Contains("Map Clutch"))
                         if (_secondClutchButtonIndex.Index == -1)
                         {
                             b.ButtonText = " Map Clutch\n\nNot Assigned";
@@ -642,7 +692,7 @@ namespace AdvancedInput
                 case InputType.Anolog:
                     if (_inputWheel.Axes != null)
                         if (i.Index < _inputWheel.Axes.Length)
-                            return _inputWheel.Axes[i.Index] / MaxAxisValue;
+                            return (float)_inputWheel.Axes[i.Index] / MaxAxisValue;
                     break;
             }
 
@@ -788,28 +838,35 @@ namespace AdvancedInput
 
 
 
-
-
-            if (_useNewReleaseMethord)
+            if (_useRealSecondClutch)
             {
-                _clutchReleaseTimer -= dt;//release the cutch by time
-                if (_clutchReleaseTimeStart > 0)
-                    _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _newReleaseClutchBitingPointCatch;  //set the clutch point
-                else
-                    _secondClutchDepressedAmount = 0;
+                float clutchOutput = (IsWheelInputPressed(_secondClutchButtonIndex) + 1) / 2f; 
+                _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchBitingPoint * clutchOutput, 0, 1); //standard clamp
             }
             else
-                _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
+            {
+                if (_useNewReleaseMethord)
+                {
+                    _clutchReleaseTimer -= dt;//release the cutch by time
+                    if (_clutchReleaseTimeStart > 0)
+                        _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _newReleaseClutchBitingPointCatch;  //set the clutch point
+                    else
+                        _secondClutchDepressedAmount = 0;
+                }
+                else
+                    _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
 
-            //================DISPLAY AN ERROR MSG IF NO BUTTONS FOR USER TO KNOW THERE IS A PROBLEM=================
+                //================DISPLAY AN ERROR MSG IF NO BUTTONS FOR USER TO KNOW THERE IS A PROBLEM=================
 
 
-            if (IsWheelInputPressed(_secondClutchButtonIndex) > .5f)
-                DepressSecondClutch(); //depresse the clutch
+                if (IsWheelInputPressed(_secondClutchButtonIndex) > .5f)
+                    DepressSecondClutch(); //depresse the clutch
+
+                _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchDepressedAmount, 0, 1); //standard clamp
+            }
 
 
-
-            _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchDepressedAmount, 0, 1); //standard clamp
+           
 
             //update the virtual joystick
             //now there is a really annoying thing about vjoy axis
@@ -958,6 +1015,7 @@ namespace AdvancedInput
                 writer.WriteAttributeBool("AutoLoadBestSetup", AutoLoadFastestSetup);
                 writer.WriteAttributeBool("TimingsOnlyMode", TimesOnlyMode);
                 writer.WriteAttributeBool("SpeakTimings", SayTimingOutloud);
+                writer.WriteAttributeBool("UseRealClutch", _useRealSecondClutch);
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
@@ -1011,6 +1069,8 @@ namespace AdvancedInput
                             TimesOnlyMode = reader.ReadAttributeBool("TimingsOnlyMode");
 
                             SayTimingOutloud = reader.ReadAttributeBool("SpeakTimings");
+
+                            _useRealSecondClutch = reader.ReadAttributeBool("UseRealClutch");
                         }
                     }
 
