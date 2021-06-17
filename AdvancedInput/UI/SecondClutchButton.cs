@@ -179,7 +179,8 @@ namespace AdvancedInput.UI
         private bool _haveLoadedContent = false;
         public override void Update(float dt)
         {
-            base.Update(dt); //base update for all ui elements
+            if (!Wheel.TimesOnlyMode || !_active)
+                base.Update(dt); //base update for all ui elements
 
             if (!_active)
                 return;
@@ -389,6 +390,12 @@ namespace AdvancedInput.UI
 
                 sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
             base.Draw(sb);
+
+            if (Wheel.TimesOnlyMode)
+            {
+                sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
+                sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
+            }
 
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
             {

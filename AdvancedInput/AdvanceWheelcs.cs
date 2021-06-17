@@ -213,7 +213,13 @@ namespace AdvancedInput
                     if (AutoLoadFastestSetup)
                         b.SetPressed();
 
-                    b = s.Elements[6] as Button; //get the times only mode button
+                    /*if (TimesOnlyMode)
+                        b.Deactive();
+                    else
+                        b.Activate()*/
+
+                    b = s.Elements[7] as Button; //get the times only mode button
+                    b.ResetButtonState();
                     if (TimesOnlyMode)
                         b.SetPressed();
 
