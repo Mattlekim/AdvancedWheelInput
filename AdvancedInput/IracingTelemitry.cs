@@ -22,7 +22,6 @@ namespace AdvancedInput
         public bool IsConnected { get; private set; } = false;
         private float _timeSinceGotData = 5f;
 
-
         public string CurrentCar { get; private set; }
 
         public List<TimeRecord> TimeRecords = new List<TimeRecord>();

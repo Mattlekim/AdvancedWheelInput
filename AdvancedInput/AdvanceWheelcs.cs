@@ -229,12 +229,12 @@ namespace AdvancedInput
                     b = s.Elements[4] as Button; //get the map clutch button
                     if (_secondClutchButtonIndex.Index == -1)
                     {
-                        b.ButtonText = " Map Clutch\n\nNot Assigned";
+                        b.ButtonText = " Map Second\n     Clutch\n\nNot Assigned";
                         b.TextColour = Color.Red;
                     }
                     else
                     {
-                        b.ButtonText = "Map Clutch";
+                        b.ButtonText = "Map Second\n     Clutch";
                         b.TextColour = Color.Black;
                     }
 
