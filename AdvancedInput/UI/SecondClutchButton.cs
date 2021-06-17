@@ -395,6 +395,8 @@ namespace AdvancedInput.UI
             {
                 sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
                 sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
+
+                sb.DrawString(Font, "Please ensure that you\n  set the clutch in the\n  settings for the app\n       to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
             }
 
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
@@ -452,6 +454,10 @@ namespace AdvancedInput.UI
 
                     sb.DrawString(Font, $"{Math.Round(tr.HoldTime, 2)}s", new Vector2(730, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                 }
+            }
+            else
+            {
+                sb.DrawString(Font, $"         Iracing Not Detected\nPlease Make Sure It Is Running.", new Vector2(310, 10), Color.White, 0f, Vector2.Zero, .6f, SpriteEffects.None, 0f);
             }
 
         }

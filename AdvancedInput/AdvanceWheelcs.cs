@@ -82,7 +82,10 @@ namespace AdvancedInput
         /// </summary>
         public bool TimesOnlyMode { get; private set; } = false;
 
-        public bool SayTimingOutloud = true;
+        /// <summary>
+        /// if to say out loud the time or not
+        /// </summary>
+        public bool SayTimingOutloud = false;
         /// <summary>
         /// the inputs for making ajustments with the wheel
         /// </summary>
