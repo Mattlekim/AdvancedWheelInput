@@ -60,6 +60,7 @@
     <Compile Include="UI\Slider.cs" />
     <Compile Include="UI\Surface.cs" />
     <Compile Include="UI\UiEliment.cs" />
+    <Compile Include="Voice.cs" />
     <Compile Include="WheelState.cs" />
   </ItemGroup>
   <ItemGroup>

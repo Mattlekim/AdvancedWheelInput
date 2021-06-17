@@ -6,10 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 
 using vJoy.Wrapper;
+
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Audio;
+
 using Riddlersoft.Core.Input;
 using Riddlersoft.Core.Xml;
 using Riddlersoft.Core;
@@ -79,6 +82,7 @@ namespace AdvancedInput
         /// </summary>
         public bool TimesOnlyMode { get; private set; } = false;
 
+        public bool SayTimingOutloud = true;
         /// <summary>
         /// the inputs for making ajustments with the wheel
         /// </summary>
@@ -487,13 +491,19 @@ namespace AdvancedInput
             }
 
         }
+
+       
+      
+
         /// <summary>
         /// load all needed content
         /// </summary>
         /// <param name="content">the game content manager</param>
         public void LoadContent(ContentManager content)
         {
-           
+            Voice.LoadContent(content);
+
+            Voice.Speak(4.84578f);
 
             _font = content.Load<SpriteFont>("Font"); //load font
             _iconConfig = content.Load<Texture2D>("Imgs\\config"); //load texture icon for config
@@ -682,6 +692,8 @@ namespace AdvancedInput
 
         public void Update(float dt)
         {
+            Voice.Update(dt);
+
 
             if (!_vJoyConnected || !_validVJoyConnection)
             {

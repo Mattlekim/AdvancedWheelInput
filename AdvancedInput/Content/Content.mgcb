@@ -56,6 +56,12 @@
 /processorParam:Quality=Best
 /build:ui_fail_01.wav
 
+#begin Voice/0.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/0.wav
+
 #begin Voice/0p.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
