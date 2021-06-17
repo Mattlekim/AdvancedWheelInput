@@ -37,6 +37,7 @@ namespace AdvancedInput
             OnConnected += OnConnect;
         }
 
+        public Action<TimeRecord> On0To60;
         public void ClearCurrentCarTimes()
         {
             TimeRecords.Clear();
@@ -62,10 +63,15 @@ namespace AdvancedInput
                     TimeRecords.RemoveAt(index);
             }
 
-            TimeRecords.Add(new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime, _holdTime)
+            TimeRecord tr = new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime, _holdTime)
             {
                 WasClutchStart = _usedSecondClutch,
-            });
+            };
+
+            TimeRecords.Add(tr);
+
+            if (On0To60 != null)
+                On0To60(tr);
 
             SaveTelimtory();
         }

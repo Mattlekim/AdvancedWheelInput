@@ -228,6 +228,9 @@ namespace AdvancedInput
                         b.ButtonText = "Map Clutch";
                         b.TextColour = Color.Black;
                     }
+
+                    b = s.Elements[9] as Button; //get the speak button
+                    b.Depressed = SayTimingOutloud;
                 }
             };
            
@@ -378,10 +381,31 @@ namespace AdvancedInput
                 }
             });
 
+            _surfaceSettings.AddElement(new Button(this, new Rectangle(350, 300, 125, 125))
+            {
+                PrimaryColour = Color.Orange * .2f,
+                SecondryColour = Color.Orange,
+                ButtonText = " Speak\nTimings",
+                TextColour = Color.White,
+                TextScale = .5f,
+                Sticky = true,
+                OnClick = (Button b) =>
+                {
+
+                    SayTimingOutloud = b.Depressed;
+                }
+            });
+
 
             _surfaceSettings.Deactive();
             _uiElements.Add(_surfaceSettings);
             UpdateSuraceButtons();
+
+            _telemitry.On0To60 = (TimeRecord tr) =>
+            {
+                if (SayTimingOutloud)
+                    Voice.Speak(tr.ZeroToSixty);
+            };
         }
 
         public void UpdateSuraceButtons()
@@ -502,8 +526,6 @@ namespace AdvancedInput
         public void LoadContent(ContentManager content)
         {
             Voice.LoadContent(content);
-
-            Voice.Speak(4.84578f);
 
             _font = content.Load<SpriteFont>("Font"); //load font
             _iconConfig = content.Load<Texture2D>("Imgs\\config"); //load texture icon for config
@@ -926,6 +948,7 @@ namespace AdvancedInput
 
                 writer.WriteAttributeBool("AutoLoadBestSetup", AutoLoadFastestSetup);
                 writer.WriteAttributeBool("TimingsOnlyMode", TimesOnlyMode);
+                writer.WriteAttributeBool("SpeakTimings", SayTimingOutloud);
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
@@ -977,6 +1000,8 @@ namespace AdvancedInput
 
                             AutoLoadFastestSetup = reader.ReadAttributeBool("AutoLoadBestSetup");
                             TimesOnlyMode = reader.ReadAttributeBool("TimingsOnlyMode");
+
+                            SayTimingOutloud = reader.ReadAttributeBool("SpeakTimings");
                         }
                     }
 
