@@ -212,6 +212,18 @@ namespace AdvancedInput
                     b = s.Elements[6] as Button; //get the times only mode button
                     if (TimesOnlyMode)
                         b.SetPressed();
+
+                    b = s.Elements[4] as Button; //get the map clutch button
+                    if (_secondClutchButtonIndex.Index == -1)
+                    {
+                        b.ButtonText = " Map Clutch\n\nNot Assigned";
+                        b.TextColour = Color.Red;
+                    }
+                    else
+                    {
+                        b.ButtonText = "Map Clutch";
+                        b.TextColour = Color.Black;
+                    }
                 }
             };
            
@@ -373,7 +385,7 @@ namespace AdvancedInput
             foreach (UiEliment ui in _surfaceSettings.Elements)
             {
                 Button b = ui as Button;
-                if (b!= null)
+                if (b != null)
                 {
                     if (b.ButtonText.Contains("Incress"))
                     {
@@ -458,6 +470,19 @@ namespace AdvancedInput
                             b.TextColour = Color.Black;
                         }
                     }
+
+                    if (b.ButtonText.Contains("Clutch"))
+                        if (_secondClutchButtonIndex.Index == -1)
+                        {
+                            b.ButtonText = " Map Clutch\n\nNot Assigned";
+                            b.TextColour = Color.Red;
+                        }
+                        else
+                        {
+                            b.ButtonText = "Map Clutch";
+                            b.TextColour = Color.Black;
+                        }
+
                 }
             }
 
