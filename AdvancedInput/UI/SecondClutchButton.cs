@@ -396,7 +396,7 @@ namespace AdvancedInput.UI
                 sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
                 sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
 
-                sb.DrawString(Font, "Please ensure that you\n  set the second clutch\n  in the settings for the\napp to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, "Please ensure that you\n  set the second clutch\n  in the settings for the\n     app to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
             }
 
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
