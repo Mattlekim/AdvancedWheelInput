@@ -212,13 +212,13 @@ namespace AdvancedInput
                 if (!_virtualJoyStick.Valid())
                 {
                     ValidVJoyConnection = false;
-                    TimesOnlyMode = true;
+                 //   TimesOnlyMode = true;
                 }
             }
             catch
             {
                 _vJoyConnected = false;
-                TimesOnlyMode = true;
+                //TimesOnlyMode = true;
                 SimpleMouse.Enabled = false;
             }
 
