@@ -447,7 +447,7 @@ namespace AdvancedInput.UI
 
 
                 base.Draw(sb);
-                sb.Draw(Dot, new Rectangle(0, 0, 500, 400), Color.Black * .8f);
+                sb.Draw(Dot, new Rectangle(0, 0, 300, 400), new Color(51, 64, 69));
                 sb.DrawString(Wheel._font, "Second Clutch Needs", new Vector2(10, 145), Color.White , 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
                 sb.DrawString(Wheel._font, "Setting up", new Vector2(80, 175), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
                 

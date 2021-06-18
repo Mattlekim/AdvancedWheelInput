@@ -993,8 +993,9 @@ namespace AdvancedInput
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
-                    if (TimesOnlyMode)
-                        sb.Draw(_dot, new Rectangle(0, 0, 300, 400), new Color(51, 64, 69));
+                  //  if (TimesOnlyMode)
+                    //    if (!_surfaceSettings.IsActive)
+                      //      sb.Draw(_dot, new Rectangle(0, 0, 300, 400), new Color(51, 64, 69));
 
                     if (!_surfaceSettings.IsActive)
                     {
