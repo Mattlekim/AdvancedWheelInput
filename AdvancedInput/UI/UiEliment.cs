@@ -62,7 +62,7 @@ namespace AdvancedInput.UI
 
         private bool _activateNextUpdate = false;
 
-        public void Activate()
+        public void Activate(bool imediate = false)
         {
             if (_active)
                 return;
@@ -71,10 +71,12 @@ namespace AdvancedInput.UI
                 return;
 
             
-
-            _activateNextUpdate = true;
+            if (imediate)
+                _active = true;
+            else
+                _activateNextUpdate = true;
             foreach (UiEliment ui in Elements)
-                ui.Activate();
+                ui.Activate(imediate);
 
             if (OnActive != null)
                 OnActive(this);

@@ -135,7 +135,7 @@ namespace AdvancedInput
         /// </summary>
         private bool _vJoyConnected = false;
 
-        private bool _validVJoyConnection = true;
+        public bool ValidVJoyConnection { get; private set; } = true;
 
         private float _newReleaseClutchBitingPointCatch;
 
@@ -211,12 +211,14 @@ namespace AdvancedInput
                 _virtualJoyStick.Aquire(); //try to get the virutal joystick
                 if (!_virtualJoyStick.Valid())
                 {
-                    _validVJoyConnection = false;
+                    ValidVJoyConnection = false;
+                    TimesOnlyMode = true;
                 }
             }
             catch
             {
                 _vJoyConnected = false;
+                TimesOnlyMode = true;
                 SimpleMouse.Enabled = false;
             }
 
@@ -369,7 +371,7 @@ namespace AdvancedInput
                     SimpleMouse.Reset();
                     _surfaceSettings.Deactive();
                     _secondClutchButton.Activate();
-                    _bntSettings.Activate();
+                    _bntSettings.Activate(true);
                     SaveConfig();
                 }
 
@@ -613,6 +615,10 @@ namespace AdvancedInput
             _uiElements.Add(_bntSettings);
 
             _secondClutchButton.SetReleaseState(_secondClutchRelaseTime);
+
+            ///we deactivate and activate to tring on activate event on startup
+            _secondClutchButton.Deactive();
+            _secondClutchButton.Activate(true);
         }
 
         /// <summary>
@@ -710,6 +716,9 @@ namespace AdvancedInput
         JoystickState[] _currentJoystickStates = new JoystickState[8];
         public Input GetInputButton()
         {
+            if (KeyboardAPI.IsKeyPressed(Keys.Escape))
+                return null;
+
             JoystickCapabilities jCapabilityes;
             JoystickState jState;
             for (int i = 0; i < 8; i++) //loop though all joystics
@@ -775,13 +784,15 @@ namespace AdvancedInput
         {
             Voice.Update(dt);
 
-
-            if (!_vJoyConnected || !_validVJoyConnection)
+            if (!TimesOnlyMode)
             {
-
-                return;
+                if (!_vJoyConnected || !ValidVJoyConnection)
+                {
+                    _surfaceSettings.Update(dt);
+                    return;
+                }
+             
             }
-
             //set old state
             for (int i = 0; i < 8; i++)
             {
@@ -812,6 +823,13 @@ namespace AdvancedInput
                                     b.Update(dt);
                                 return;*/
                             bnt = GetInputButton();
+                            if (bnt == null)
+                            {
+                                _currentState = WheelState.Run;
+                                _surfaceSettings.Activate();
+                                UpdateSuraceButtons();
+                            }
+                            else
                             if (bnt.Index != -1) //if a button is press
                             {
                                 _directionButtons[(int)_inputDirection] = bnt;
@@ -823,6 +841,13 @@ namespace AdvancedInput
                             return;
                         case ConfigArea.DetectClutch:
                             bnt = GetInputButton();
+                            if (bnt == null)
+                            {
+                                _currentState = WheelState.Run;
+                                _surfaceSettings.Activate();
+                                UpdateSuraceButtons();
+                            }
+                            else
                             if (bnt.Index != -1) //if a button is press
                             {
                                 _secondClutchButtonIndex = bnt;
@@ -874,7 +899,8 @@ namespace AdvancedInput
             //so if we run Iracing without runnig this app the clutch defaults to half pressed
             //therefore we have to componsate by not allowing the axis to go below half value
             //we loses half resolution but its worth the traid off
-            _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(HalfValue * _secondClutchDepressedAmount + HalfValue), Axis.HID_USAGE_Z);
+            if (ValidVJoyConnection && _vJoyConnected)
+                _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(HalfValue * _secondClutchDepressedAmount + HalfValue), Axis.HID_USAGE_Z);
 
 
 
@@ -908,7 +934,7 @@ namespace AdvancedInput
                     break;
 
                 case WheelState.Run:
-
+                    if (!TimesOnlyMode)
                     if (!_vJoyConnected)
                     {
 
@@ -932,14 +958,18 @@ namespace AdvancedInput
                     }
                     else
                     {
-                        if (!_validVJoyConnection)
+                        if (!ValidVJoyConnection)
                         {
                             foreach (UiEliment b in _uiElements)
                                 b.Draw(sb);
 
-                            sb.Draw(_dot, new Rectangle(0, 0, 300, 500), Color.Black * .8f);
+                            if (_surfaceSettings.IsActive)
+                                return;
+
+                            sb.Draw(_dot, new Rectangle(0, 0, 300, 500), Color.Black);
+                            _uiElements[2].Draw(sb);
                             sb.DrawString(_font, "VJoy Error", new Vector2(10, 10), Color.White, 0f, Vector2.Zero, .7f, SpriteEffects.None, 0f);
-                            sb.DrawString(_font, "To you the software clutch", new Vector2(10, 60), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "To use the software clutch", new Vector2(10, 60), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
                             sb.DrawString(_font, "you must install vJoy.", new Vector2(10, 80), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
 
                             sb.DrawString(_font, "If Vjoy is installed", new Vector2(10, 120), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
@@ -951,20 +981,29 @@ namespace AdvancedInput
                             sb.DrawString(_font, "the the vJoy controler", new Vector2(10, 240), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
                             sb.DrawString(_font, "has its Z axis enabled.", new Vector2(10, 260), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
 
-                            sb.DrawString(_font, "Timings only mode enabled.", new Vector2(10, 300), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
-                            sb.DrawString(_font, "To use the timings", new Vector2(10, 320), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
-                            sb.DrawString(_font, "simply start up Iracing", new Vector2(10, 340), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
-                            sb.DrawString(_font, "and pratice your starts.", new Vector2(10, 360), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "You can turn on.", new Vector2(10, 300), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "Timings Mode Only", new Vector2(10, 320), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
+                            sb.DrawString(_font, "in the settings", new Vector2(10, 340), Color.White, 0f, Vector2.Zero, .4f, SpriteEffects.None, 0f);
                             return;
                         }
                         
                     }
-
+                   
 
                     foreach (UiEliment b in _uiElements)
                         b.Draw(sb);
 
-                  
+                    if (TimesOnlyMode)
+                        sb.Draw(_dot, new Rectangle(0, 0, 300, 400), new Color(51, 64, 69));
+
+                    if (!_surfaceSettings.IsActive)
+                    {
+                        if (TimesOnlyMode)
+                            sb.DrawString(_font, "Timing Only Mode", new Vector2(10, 10), Color.White, 0f, Vector2.Zero, .6f, SpriteEffects.None, 0f);
+
+                        _secondClutchButton.DrawTelemitory(sb);
+                    }
+
                     if (_useRealSecondClutch) //if using real clutch hide the release settings
                         if (_uiElements[1].IsActive)
                             sb.Draw(_dot, new Rectangle(180, 80, 100, 220), new Color(51,64,69));
