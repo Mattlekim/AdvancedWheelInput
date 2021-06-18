@@ -36,8 +36,23 @@ namespace AdvancedInput.UI
 
         private Button _bntSlowRelease, _bntFastRelease;
 
+        
+
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
+            OnActive = (UiEliment el) =>
+            {
+                if (!wheel.ValidVJoyConnection)
+                {
+                    Elements[4].Deactive();
+                    Elements[5].Deactive();
+                }
+                else
+                {
+                    Elements[4].Activate(true);
+                    Elements[5].Activate(true);
+                }
+            };
             //some basic formatting
             PrimaryColour = Color.LightBlue * .3f;
             SecondryColour = Color.OrangeRed * .5f;
@@ -352,53 +367,8 @@ namespace AdvancedInput.UI
         }
 
         float _timeTillLock = 0;
-        public override void Draw(SpriteBatch sb)
+        public void DrawTelemitory(SpriteBatch sb)
         {
-            if (!_active)
-                return;
-
-            //draw save text when needed
-            sb.Draw(Dot, new Rectangle(0, 430, 800, 50), Color.Green * _showSaved);
-            sb.DrawString(Font, "Saved Setup", new Vector2(400, 455), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
-
-
-            if (Wheel._secondClutchButtonIndex.Index == -1) //if we dont have a button set
-            {
-
-
-
-                base.Draw(sb);
-                sb.Draw(Dot, new Rectangle(0, 0, 500, 400), Color.Black * .8f);
-                sb.DrawString(Wheel._font, "Second Clutch Needs", new Vector2(10, 145), Color.White , 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                sb.DrawString(Wheel._font, "Setting up", new Vector2(80, 175), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                
-
-                return;
-            }
-
-
-            if (LockControles)
-            {
-                sb.DrawString(Font, "Settings Are Locked", new Vector2(25, 310), Color.Orange, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, "Press Up and Clutch Button\n At Same Time To Release", new Vector2(45, 340), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
-            }
-            else
-            {
-                sb.DrawString(Font, $"Settings Will Lock In {(int)_timeTillLock}s", new Vector2(15, 310), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, $"Of Inativity", new Vector2(95, 340), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
-            }
-
-                sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
-            base.Draw(sb);
-
-            if (Wheel.TimesOnlyMode)
-            {
-                sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
-                sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
-
-                sb.DrawString(Font, "Please ensure that you\n  set the second clutch\n  in the settings for the\n     app to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-            }
-
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
             {
                 sb.Draw(Dot, new Rectangle(300, 0, 500, 50), Color.LightBlue * .5f);
@@ -459,6 +429,56 @@ namespace AdvancedInput.UI
             {
                 sb.DrawString(Font, $"         Iracing Not Detected\nPlease Make Sure It Is Running.", new Vector2(310, 10), Color.White, 0f, Vector2.Zero, .6f, SpriteEffects.None, 0f);
             }
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            if (!_active)
+                return;
+
+            //draw save text when needed
+            sb.Draw(Dot, new Rectangle(0, 430, 800, 50), Color.Green * _showSaved);
+            sb.DrawString(Font, "Saved Setup", new Vector2(400, 455), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
+
+
+            if (Wheel._secondClutchButtonIndex.Index == -1) //if we dont have a button set
+            {
+
+
+
+                base.Draw(sb);
+                sb.Draw(Dot, new Rectangle(0, 0, 300, 400), new Color(51, 64, 69));
+                sb.DrawString(Wheel._font, "Second Clutch Needs", new Vector2(10, 145), Color.White , 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Wheel._font, "Setting up", new Vector2(80, 175), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                
+
+                return;
+            }
+
+
+            if (LockControles)
+            {
+                sb.DrawString(Font, "Settings Are Locked", new Vector2(25, 310), Color.Orange, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, "Press Up and Clutch Button\n At Same Time To Release", new Vector2(45, 340), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+            }
+            else
+            {
+                sb.DrawString(Font, $"Settings Will Lock In {(int)_timeTillLock}s", new Vector2(15, 310), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, $"Of Inativity", new Vector2(95, 340), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
+            }
+
+                sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
+            base.Draw(sb);
+
+            if (Wheel.TimesOnlyMode)
+            {
+                sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
+                sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
+
+                sb.DrawString(Font, "Please ensure that you\n  set the second clutch\n  in the settings for the\n     app to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+            }
+
+            
 
         }
 
