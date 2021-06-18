@@ -36,7 +36,7 @@ namespace AdvancedInput
             for (int i = 0; i < 10; i++)
                 _voiceNumber.Add(content.Load<SoundEffect>($"Voice\\{i}"));
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 16; i++)
                 _voicePoint.Add(content.Load<SoundEffect>($"Voice\\{i}p"));
 
             _voice0To60 = content.Load<SoundEffect>("Voice\\0to60");
@@ -55,6 +55,12 @@ namespace AdvancedInput
             //_voiceParts.Enqueue(_voice0To60);
 
             int whole = (int)number;
+
+            if (whole < 0)
+                return;
+
+            if (whole > 15)
+                return;
 
             //add the whole number
             int dec = (int)((number - whole) * 1000);
