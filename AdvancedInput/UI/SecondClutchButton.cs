@@ -17,7 +17,6 @@ namespace AdvancedInput.UI
     {
         //sliders for biting point and relase time
         private Slider _slBitingPoint;
-        private Slider _slReleaseTime;
 
         //other ui buttons
         private Button _bntSaveConfig;
@@ -37,7 +36,15 @@ namespace AdvancedInput.UI
         private Button _bntSlowRelease, _bntFastRelease;
 
         
-
+        public void UpdateReleaseTimeButtons()
+        {
+            _bntFastRelease.ResetButtonState();
+            _bntSlowRelease.ResetButtonState();
+            if (Wheel._secondClutchRelaseTime <= 1)
+                _bntFastRelease.SetPressed();
+            else
+                _bntSlowRelease.SetPressed();
+        }
         public SecondClutchButton(AdvanceWheel wheel) : base(wheel, new Rectangle(0, 0, 300, 500))
         {
             OnActive = (UiEliment el) =>
@@ -45,12 +52,12 @@ namespace AdvancedInput.UI
                 if (!wheel.ValidVJoyConnection)
                 {
                     Elements[4].Deactive();
-                    Elements[5].Deactive();
+                    
                 }
                 else
                 {
                     Elements[4].Activate(true);
-                    Elements[5].Activate(true);
+                  
                 }
             };
             //some basic formatting
@@ -71,21 +78,11 @@ namespace AdvancedInput.UI
 
 
             
-            _slReleaseTime = new UI.Slider(new Rectangle(150, 80, 50, 200), 3, 0, .5f)
-            {
-                TextName = "Release Time\n(Seconds)",
-                TextScale = .3f,
-                Current = 1f / (wheel._secondClutchRelaseTime * 3f),
-                OnChange = (Slider s) =>
-                {
-                    wheel._secondClutchRelaseTime = 1f / s.GetValue();
-                },
-            };
+           
 
             if (Wheel._useNewReleaseMethord)
             {
-                _slReleaseTime.Deactive();
-                _slReleaseTime.Locked = true;
+                
 
                 _bntSlowRelease = new Button(wheel, new Rectangle(185, 80, 70, 70))
                 {
@@ -151,8 +148,7 @@ namespace AdvancedInput.UI
 
             //-----------------ADD UI ELEMENTS TO THIS -------------------------
             AddElement(_slBitingPoint);
-            AddElement(_slReleaseTime);
-
+         
             AddElement(_bntSetInput);
             AddElement(_bntSaveConfig);
         }
@@ -189,6 +185,7 @@ namespace AdvancedInput.UI
             if (index >= Wheel._telemitry.TimeRecords.Count)
                 return;
             _selectedTime = index;
+            UpdateReleaseTimeButtons();
         }
 
         private bool _haveLoadedContent = false;
@@ -324,30 +321,7 @@ namespace AdvancedInput.UI
                         UpdateSliders();
                     }
                 }
-                if (_sliderToChange == 1)
-                {
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Up]) > .5f)
-                    {
-                        _slReleaseTime.Current += 0.01f;
-                        _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);
-                        Wheel._secondClutchRelaseTime = 1f / _slReleaseTime.GetValue();
-                        // Wheel._secondClutchRelaseTime += .01f;
-                        //  Wheel._secondClutchRelaseTime = MathHelper.Clamp(Wheel._secondClutchRelaseTime, 0, 1);
-                        //  Wheel._secondClutchRelaseTime = (float)Math.Round(Wheel._secondClutchRelaseTime, 2);
-                        // UpdateSliders();
-                    }
-
-                    if (Wheel.IsWheelInputPressed(Wheel._directionButtons[(int)CardinalDirection.Down]) > .5f)
-                    {
-                        _slReleaseTime.Current -= 0.01f;
-                        _slReleaseTime.Current = MathHelper.Clamp(_slReleaseTime.Current, 0, 1);
-                        Wheel._secondClutchRelaseTime = 1f / _slReleaseTime.GetValue();
-                        //  Wheel._secondClutchRelaseTime -= .01f;
-                        //  Wheel._secondClutchRelaseTime = MathHelper.Clamp(Wheel._secondClutchRelaseTime, 0, 1);
-                        //  Wheel._secondClutchRelaseTime = (float)Math.Round(Wheel._secondClutchRelaseTime, 2);
-                        //  UpdateSliders();
-                    }
-                }
+               
             }
 
         }
@@ -355,7 +329,7 @@ namespace AdvancedInput.UI
         public void UpdateSliders()
         {
             _slBitingPoint.Current = Wheel._secondClutchBitingPoint;
-            _slReleaseTime.Current = 1f / (Wheel._secondClutchRelaseTime * 3f);
+            UpdateReleaseTimeButtons();
         }
 
         public override void OnLClick(Vector2 pos)
@@ -412,7 +386,7 @@ namespace AdvancedInput.UI
                     sb.DrawString(Font, $"{Math.Round(tr.ZeroToSixty, 2)}s", new Vector2(330, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                     if (Wheel._useNewReleaseMethord)
                     {
-                        if (Wheel._telemitry.TimeRecords[i].ClutchReleaseTime <= 1) //fast
+                        if (Wheel._telemitry.TimeRecords[i].ClutchReleaseTime <= 1.1f) //fast
                             sb.DrawString(Font, $"Fast", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
                         else
                             sb.DrawString(Font, $"Slow", new Vector2(630, 80 + 20 * i), Color.White, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
@@ -459,7 +433,7 @@ namespace AdvancedInput.UI
             if (LockControles)
             {
                 sb.DrawString(Font, "Settings Are Locked", new Vector2(25, 310), Color.Orange, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
-                sb.DrawString(Font, "Press Up and Clutch Button\n At Same Time To Release", new Vector2(45, 340), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, "Press Incress Biting Point and\nClutch Button At Same Time\n               To Unlock", new Vector2(45, 340), Color.Orange, 0f, Vector2.Zero, .3f, SpriteEffects.None, 0f);
             }
             else
             {

@@ -39,7 +39,7 @@ namespace AdvancedInput
             // TODO: Add your initialization logic here
             Components.Add(new SimpleMouse(this));
             Components.Add(new KeyboardAPI(this));
-            Components.Add(new IRacingTelemitry(this));
+            
             float tet = 1f / 80f;
            // this.TargetElapsedTime = new System.TimeSpan(0,0,0,0, (int)(tet * 1000));
             //KeyboardAPI.Active
@@ -57,8 +57,12 @@ namespace AdvancedInput
             Wheel = new AdvanceWheel(this);
             Wheel.LoadContent(Content);
 
+            Components.Add(new IRacingTelemitry(this));
             IRacingTelemitry irt = Components[2] as IRacingTelemitry;
             irt.SetWheel(Wheel);
+
+            Wheel.SetTelemitory();
+
             // TODO: use this.Content to load your game content here
         }
 

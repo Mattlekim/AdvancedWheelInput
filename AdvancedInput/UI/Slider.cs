@@ -41,7 +41,8 @@ namespace AdvancedInput.UI
             sb.Draw(Dot, _currentArea, SecondryColour * Visiblity);
 
             Rectangle secondArea = _currentArea.Shrink(2);
-            sb.Draw(Dot, new Rectangle(secondArea.X, secondArea.Y + Convert.ToInt32(secondArea.Height * (1 - Current)), secondArea.Width, Convert.ToInt32(secondArea.Height * (Current))), PrimaryColour * Visiblity);
+            float per = (Current - Min) / (Max - Min);
+            sb.Draw(Dot, new Rectangle(secondArea.X, secondArea.Y + Convert.ToInt32(secondArea.Height * (1 - per)), secondArea.Width, Convert.ToInt32(secondArea.Height * (per))), PrimaryColour * Visiblity);
 
 
 //            sb.Draw(Dot, new Rectangle(_currentArea.Left - 5, _currentArea.Y, 5, 2), SecondryColour * Visiblity);
@@ -53,9 +54,9 @@ namespace AdvancedInput.UI
 
             sb.DrawString(Font, $"{Max}", _currentArea.TopLeft() + new Vector2(30, 0), TextColour * Visiblity, 0f, new Vector2(Font.MeasureString($"{Max}").X, Font.MeasureString($"{Max}").Y * .5f), .5f, SpriteEffects.None, 0f);
             sb.DrawString(Font, $"{Min}", _currentArea.BotomLeft() + new Vector2(32, 0), TextColour * Visiblity, 0f, new Vector2(Font.MeasureString($"{Min}").X, Font.MeasureString($"{Min}").Y * .5f), .5f, SpriteEffects.None, 0f);
-            _Output = $"{Math.Round(Current * (Max - Min) + Min, 2)}";
-            sb.DrawString(Font, _Output, _currentArea.TopLeft() + new Vector2(49, 2 + secondArea.Height * (1 - Current)),  Color.Black * Visiblity, 0f, new Vector2(Font.MeasureString(_Output).X, Font.MeasureString(_Output).Y * .5f), .4f, SpriteEffects.None, 0f);
-            sb.DrawString(Font, _Output, _currentArea.TopLeft() + new Vector2(47, secondArea.Height * (1 - Current)), TextColour * Visiblity, 0f, new Vector2(Font.MeasureString(_Output).X, Font.MeasureString(_Output).Y * .5f), .4f, SpriteEffects.None, 0f);
+            _Output = $"{Math.Round(Current, 2)}";
+            sb.DrawString(Font, _Output, _currentArea.TopLeft() + new Vector2(49, 2 + secondArea.Height * (1 - per)),  Color.Black * Visiblity, 0f, new Vector2(Font.MeasureString(_Output).X, Font.MeasureString(_Output).Y * .5f), .4f, SpriteEffects.None, 0f);
+            sb.DrawString(Font, _Output, _currentArea.TopLeft() + new Vector2(47, secondArea.Height * (1 - per)), TextColour * Visiblity, 0f, new Vector2(Font.MeasureString(_Output).X, Font.MeasureString(_Output).Y * .5f), .4f, SpriteEffects.None, 0f);
 
             if (TextName == null || TextName == string.Empty)
                 return;
@@ -72,7 +73,7 @@ namespace AdvancedInput.UI
         public override void OnLButtonDown(Vector2 pos)
         {
             float per = MathHelper.Clamp(1 - ((pos.Y - _currentArea.Y) / (float)_currentArea.Height),0,1);
-            Current = per;
+            Current = per * (Max - Min);
             Current = (float)Math.Round(Current, 2);
 
             if (OnChange != null)

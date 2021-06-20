@@ -343,6 +343,7 @@ namespace AdvancedInput
                             _wheel._secondClutchBitingPoint = TimeRecords[index].ClutchBitingPoint;
                             _wheel._secondClutchRelaseTime = TimeRecords[index].ClutchReleaseTime;
                             _wheel._secondClutchButton.SetSelectedTime(index);
+                            
                         }
                     }
                 }

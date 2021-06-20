@@ -36,6 +36,10 @@ namespace AdvancedInput
         /// </summary>
         const int MaxAxisValue = HalfValue * 2;
 
+
+        private Slider _sldVoiceVolume;
+
+        internal float _voiceVolume = 1f;
         /// <summary>
         /// weahter to use the new release methord or not
         /// </summary>
@@ -65,7 +69,7 @@ namespace AdvancedInput
         /// <summary>
         /// the speed that the clutch releases in seconds
         /// </summary>
-        internal float _secondClutchRelaseTime = 1 / 1f;
+        internal float _secondClutchRelaseTime = 1f;
 
         /// <summary>
         /// the button index to use for the second clutch
@@ -172,9 +176,9 @@ namespace AdvancedInput
                 if (_useNewReleaseMethord)
                 {
                     if (_secondClutchRelaseTime <= 1) //set the release times we have a bit of random to emulate human error
-                        _clutchReleaseTimer = (float)_rd.NextDouble() * .2f + .1f;
+                        _clutchReleaseTimer = (float)_rd.NextDouble() * .3f + .1f;
                     else
-                        _clutchReleaseTimer = (float)_rd.NextDouble() * .3f + .6f;
+                        _clutchReleaseTimer = (float)_rd.NextDouble() * .3f + .7f;
                     _clutchReleaseTimeStart = _clutchReleaseTimer;
                 }
             }
@@ -200,10 +204,21 @@ namespace AdvancedInput
         /// used for loging 0 to 60
         /// </summary>
         internal IRacingTelemitry _telemitry;
+
+        public void SetTelemitory()
+        {
+            _telemitry = _game.Components[2] as IRacingTelemitry;
+
+            _telemitry.On0To60 = (TimeRecord tr) =>
+            {
+                if (SayTimingOutloud)
+                    Voice.Speak(tr.ZeroToSixty);
+            };
+        }
         public AdvanceWheel(Game game)
         {
             _game = game; //set the game
-            _telemitry = _game.Components[2] as IRacingTelemitry;
+           
             _virtualJoyStick = new VirtualJoystick(1); //get the first virutal joystick
             try
             {
@@ -263,7 +278,7 @@ namespace AdvancedInput
                     b = s.Elements[9] as Button; //get the speak button
                     b.Depressed = SayTimingOutloud;
 
-                    b = s.Elements[10] as Button;
+                    b = s.Elements[11] as Button;
                     b.Depressed = _useRealSecondClutch;
 
                     if (_secondClutchButtonIndex.Type == InputType.Anolog & !TimesOnlyMode)
@@ -273,6 +288,8 @@ namespace AdvancedInput
                         b.Deactive();
                         _useRealSecondClutch = false;
                     }
+
+                    _sldVoiceVolume.Current = _voiceVolume;
                    
                 }
             };
@@ -440,8 +457,24 @@ namespace AdvancedInput
                 {
 
                     SayTimingOutloud = b.Depressed;
+                    //
                 }
             });
+
+            _sldVoiceVolume = new Slider(new Rectangle(490, 300, 55, 125), 1, 0, _voiceVolume)
+            {
+                PrimaryColour = Color.Orange,
+                SecondryColour = Color.LightBlue,
+                TextColour = Color.White,
+                TextScale = .5f,
+                TextName = "Volume",
+                OnChange = (Slider sld) =>
+                {
+                    _voiceVolume = MathHelper.Clamp(sld.Current, 0, 1);
+                    SoundEffect.MasterVolume = sld.Current;
+                },
+            };
+            _surfaceSettings.AddElement(_sldVoiceVolume);
 
             _surfaceSettings.AddElement(new Button(this, new Rectangle(350, 210, 125, 75))
             {
@@ -462,11 +495,7 @@ namespace AdvancedInput
             _uiElements.Add(_surfaceSettings);
             UpdateSuraceButtons();
 
-            _telemitry.On0To60 = (TimeRecord tr) =>
-            {
-                if (SayTimingOutloud)
-                    Voice.Speak(tr.ZeroToSixty);
-            };
+            
         }
 
         public void UpdateSuraceButtons()
@@ -619,6 +648,8 @@ namespace AdvancedInput
             ///we deactivate and activate to tring on activate event on startup
             _secondClutchButton.Deactive();
             _secondClutchButton.Activate(true);
+
+            _secondClutchButton.UpdateReleaseTimeButtons();
         }
 
         /// <summary>
@@ -1059,6 +1090,7 @@ namespace AdvancedInput
                 writer.WriteAttributeBool("TimingsOnlyMode", TimesOnlyMode);
                 writer.WriteAttributeBool("SpeakTimings", SayTimingOutloud);
                 writer.WriteAttributeBool("UseRealClutch", _useRealSecondClutch);
+                writer.WriteAttributeFloat("VoiceVolume", _voiceVolume);
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
@@ -1114,6 +1146,7 @@ namespace AdvancedInput
                             SayTimingOutloud = reader.ReadAttributeBool("SpeakTimings");
 
                             _useRealSecondClutch = reader.ReadAttributeBool("UseRealClutch");
+                            _voiceVolume = reader.ReadAttributeFloat("VoiceVolume");
                         }
                     }
 
@@ -1124,11 +1157,14 @@ namespace AdvancedInput
             }
             catch
             {
-               
+                _voiceVolume = 1f;   
                 _secondClutchButtonIndex = -1;
             }
 
+            SoundEffect.MasterVolume = MathHelper.Clamp(_voiceVolume, 0, 1);
+
             LoadAllInputDevices();
+          
 
             ///update the buttons to the correct state
             
