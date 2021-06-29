@@ -68,6 +68,23 @@ namespace AdvancedInput
         {
             TimeRecords.Clear();
         }
+
+        private void SaveSoon()
+        {
+            _timeTillSave = 5f; //5 seconds to save
+        }
+        public void UpdateTopSpeed()
+        {
+            if (!_logTopSpeed)
+                return;
+
+            if (SpeedMph > _previousTopSpeed)
+            {
+                _previousTopSpeed = SpeedMph;
+                TimeRecords[TimeRecords.Count - 1].TopSpeed = SpeedMph;
+                SaveSoon();
+            }
+        }
         /// <summary>
         /// add new record to the time list
         /// </summary>
@@ -77,7 +94,8 @@ namespace AdvancedInput
             if (CurrentCar == null || CurrentCar == string.Empty)
                 return;
 
-            if (TimeRecords.Count >= 21) //if we where over the limint of what can be listed
+            _logTopSpeed = true;
+            if (TimeRecords.Count >= 19) //if we where over the limint of what can be listed
             {
                 //find the worst score and delete it
                 float lowert = float.MinValue;
@@ -121,6 +139,15 @@ namespace AdvancedInput
         }
 
         /// <summary>
+        /// add the time for 0 to 100
+        /// </summary>
+        public void AddTimeRecord0To150()
+        {
+            TimeRecords[TimeRecords.Count - 1].ZeroToOneFifty = _0to60Time;
+            SaveTelimtory();
+        }
+
+        /// <summary>
         /// set the advanced wheel
         /// </summary>
         /// <param name="wheel"></param>
@@ -131,6 +158,8 @@ namespace AdvancedInput
         }
 
         private int _playerCar = -1;
+
+        public string testdata;
         void iRacing_NewData(DataSample data)
         {
             if (data.Telemetry.CarDetails.Length > 1)
@@ -141,15 +170,14 @@ namespace AdvancedInput
             SpeedMph = data.Telemetry.Speed * 2.25f;
             if (!IsConnected)
             {
-
-
-
-
                 if (OnConnected != null)
                     OnConnected();
             }
             _timeSinceGotData = 5f;
             IsConnected = true;
+
+            //testdata = $"{data.Telemetry.RRwearM} / {data.Telemetry.RRtempCM}";
+            testdata = data.Telemetry.LatAccel.ToString();
         }
 
         public void OnConnect()
@@ -163,14 +191,49 @@ namespace AdvancedInput
 
         private bool _log0to60 = false;
         private bool _log0to100 = false;
+        private bool _log0to150 = false;
         private float _0to60Time = 0;
         public bool _usedSecondClutch = false;
         private float _holdTime = 0;
+
+
+        private bool _logTopSpeed = false;
+        private float _previousTopSpeed = 0;
+
+        private float _timeTillSave = -1f;
+
+        private void SetUpStartCheck()
+        {
+            _0to60Time = 0;
+
+            _previousTopSpeed = 0;
+            _logTopSpeed = false;
+
+            _log0to60 = true;
+            _log0to100 = false;
+            _log0to150 = false;
+            
+            _holdTime = 0;
+            if (_wheel._secondClutchDepressedAmount > 0)
+                _usedSecondClutch = true;
+            else
+                _usedSecondClutch = false;
+
+         
+        }
         public override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _timeSinceGotData -= dt;
+
+            UpdateTopSpeed();
+
+            _timeTillSave -= dt;
+            _timeTillSave = MathHelper.Clamp(_timeTillSave, -1, 1000000f);
+            
+            if (_timeTillSave <= 0 && _timeTillSave + dt > 0f)
+                SaveTelimtory();
 
             if (IsConnected)
                 if (_timeSinceGotData <= 0)
@@ -183,16 +246,29 @@ namespace AdvancedInput
 
             _0to60Time += dt;
 
-            if (_log0to100)
+            if (_log0to100 | _log0to150)
             {
                 if (SpeedMph >= 100)
                 {
-                    AddTimeRecord0To100();
-                    _log0to100 = false;
+                    if (_log0to100)
+                    {
+                        AddTimeRecord0To100();
+                        _log0to100 = false;
+                        _log0to150 = true;
+                    }
+                    else
+                    if (SpeedMph >= 150)
+                    {
+                        AddTimeRecord0To150();
+                        _log0to150 = false;
+                    }
                 }
                 else
                     if (SpeedMph < 60)
+                {
                     _log0to100 = false;
+                    _log0to150 = false;
+                }
                 return;
             }
 
@@ -211,27 +287,13 @@ namespace AdvancedInput
                 }
                 else
                 {
-                    _0to60Time = 0;
-                    _log0to60 = true;
-                    _log0to100 = false;
-                    _holdTime = 0;
-                    if (_wheel._secondClutchDepressedAmount > 0)
-                        _usedSecondClutch = true;
-                    else
-                        _usedSecondClutch = false;
+                    SetUpStartCheck();
                 }
             }
             else
             if (SpeedMph < .02f)
             {
-                _0to60Time = 0;
-                _log0to60 = true;
-                _log0to100 = false;
-                _holdTime = 0;
-                if (_wheel._secondClutchDepressedAmount > 0)
-                    _usedSecondClutch = true;
-                else
-                    _usedSecondClutch = false;
+                SetUpStartCheck();
             }
 
         }
@@ -271,9 +333,11 @@ namespace AdvancedInput
 
                         writer.WriteAttributeFloat("ztosix", tr.ZeroToSixty);
                         writer.WriteAttributeFloat("ztoone", tr.ZeroToOnehundrand);
+                        writer.WriteAttributeFloat("ztoonefifty", tr.ZeroToOneFifty);
                         writer.WriteAttributeFloat("Biting", tr.ClutchBitingPoint);
                         writer.WriteAttributeFloat("Release", tr.ClutchReleaseTime);
                         writer.WriteAttributeFloat("HoldTime", tr.HoldTime);
+                        writer.WriteAttributeFloat("TopSpeed", tr.TopSpeed);
                         writer.WriteEndElement();
                     }
 
@@ -311,15 +375,18 @@ namespace AdvancedInput
                         {
                             if (reader.Name == "Time")
                             {
-                                TimeRecords.Add(new TimeRecord()
-                                {
-                                    ClutchBitingPoint = reader.ReadAttributeFloat("Biting"),
-                                    ClutchReleaseTime = reader.ReadAttributeFloat("Release"),
-                                    ZeroToSixty = reader.ReadAttributeFloat("ztosix"),
-                                    ZeroToOnehundrand = reader.ReadAttributeFloat("ztoone"),
-                                    HoldTime = reader.ReadAttributeFloat("HoldTime"),
-                                    WasClutchStart = true,
-                                }); 
+                                if (TimeRecords.Count < 19)
+                                    TimeRecords.Add(new TimeRecord()
+                                    {
+                                        ClutchBitingPoint = reader.ReadAttributeFloat("Biting"),
+                                        ClutchReleaseTime = reader.ReadAttributeFloat("Release"),
+                                        ZeroToSixty = reader.ReadAttributeFloat("ztosix"),
+                                        ZeroToOnehundrand = reader.ReadAttributeFloat("ztoone"),
+                                        ZeroToOneFifty = reader.ReadAttributeFloat("ztoonefifty"),
+                                        HoldTime = reader.ReadAttributeFloat("HoldTime"),
+                                        TopSpeed = reader.ReadAttributeFloat("TopSpeed"),
+                                        WasClutchStart = true,
+                                    });
                             }
                         }
 

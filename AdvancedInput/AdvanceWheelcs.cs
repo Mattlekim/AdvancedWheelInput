@@ -815,6 +815,8 @@ namespace AdvancedInput
         {
             Voice.Update(dt);
 
+            _game.Window.Title = _telemitry.testdata;
+
             if (!TimesOnlyMode)
             {
                 if (!_vJoyConnected || !ValidVJoyConnection)

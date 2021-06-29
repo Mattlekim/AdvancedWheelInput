@@ -12,12 +12,12 @@ namespace AdvancedInput
     public class TimeRecord
     {
     
-        public float ZeroToSixty, ZeroToOnehundrand;
+        public float ZeroToSixty, ZeroToOnehundrand, ZeroToOneFifty;
 
         public float ClutchBitingPoint;
 
         public bool WasClutchStart = false;
-    
+        public float TopSpeed = 0;
         public float ClutchReleaseTime;
 
         public float HoldTime;
@@ -29,6 +29,7 @@ namespace AdvancedInput
             ClutchReleaseTime = crt;
             HoldTime = ht;
         }
+
 
     }
 }
