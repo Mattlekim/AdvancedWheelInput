@@ -347,8 +347,11 @@ namespace AdvancedInput.UI
         /// the item to render the expanded view on
         /// </summary>
         private int _exandedTimingIndex = -1;
+
+    
         public void DrawTelemitory(SpriteBatch sb)
         {
+
             if (Wheel._telemitry.IsConnected || Wheel._telemitry.CurrentCar != null & Wheel._telemitry.CurrentCar != string.Empty)
             {
                 sb.Draw(Dot, new Rectangle(300, 0, 500, 50), Color.LightBlue * .5f);
@@ -429,6 +432,7 @@ namespace AdvancedInput.UI
             if (!_active)
                 return;
 
+         
             //draw save text when needed
             sb.Draw(Dot, new Rectangle(0, 430, 800, 50), Color.Green * _showSaved);
             sb.DrawString(Font, "Saved Setup", new Vector2(400, 455), Color.White * _showSaved, 0f, Font.MeasureString("Saved Setup") * .5f, .8f, SpriteEffects.None, 0f);
@@ -460,18 +464,25 @@ namespace AdvancedInput.UI
                 sb.DrawString(Font, $"Of Inativity", new Vector2(95, 340), Color.Orange, 0f, Vector2.Zero, .45f, SpriteEffects.None, 0f);
             }
 
-                sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
-            base.Draw(sb);
+            sb.DrawString(Wheel._font, $"Clutch", new Vector2(10, 10), Color.White);
 
+            
+
+            base.Draw(sb);
+            float amount = 0;
             if (Wheel.TimesOnlyMode)
             {
                 sb.Draw(Dot, new Rectangle(0, 0, 300, 500), new Color(20,20,20));
                 sb.DrawString(Font, "Timing Only\n     Mode", new Vector2(0, 0), Color.White);
 
                 sb.DrawString(Font, "Please ensure that you\n  set the second clutch\n  in the settings for the\n     app to work best", new Vector2(10, 200), Color.White, 0f, Vector2.Zero, .5f, SpriteEffects.None, 0f);
+                amount = 200 * Wheel._realSecondClutchInputAmount;
+                sb.Draw(Dot, new Rectangle(0, 480 - (int)amount, 5, (int)amount), Color.Red);
+                return;
             }
 
-            
+            amount = 200 * Wheel._secondClutchDepressedAmount;
+            sb.Draw(Dot, new Rectangle(45, 280 - (int)amount, 5, (int)amount), Color.Red);
 
         }
 

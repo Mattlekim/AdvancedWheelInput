@@ -153,6 +153,8 @@ namespace AdvancedInput
         /// </summary>
         internal bool _useRealSecondClutch;
         private Random _rd = new Random();
+
+        public CustomAudioMsg _customAudio;
         /// <summary>
         /// depress the second clutch
         /// </summary>
@@ -212,13 +214,14 @@ namespace AdvancedInput
             _telemitry.On0To60 = (TimeRecord tr) =>
             {
                 if (SayTimingOutloud)
-                    Voice.Speak(tr.ZeroToSixty);
+                    VoiceTime.Speak(tr.ZeroToSixty);
             };
         }
         public AdvanceWheel(Game game)
         {
             _game = game; //set the game
-           
+
+            _customAudio = new CustomAudioMsg(this);
             _virtualJoyStick = new VirtualJoystick(1); //get the first virutal joystick
             try
             {
@@ -281,7 +284,7 @@ namespace AdvancedInput
                     b = s.Elements[11] as Button;
                     b.Depressed = _useRealSecondClutch;
 
-                    if (_secondClutchButtonIndex.Type == InputType.Anolog & !TimesOnlyMode)
+                    if (_secondClutchButtonIndex.Type == InputType.Anolog)
                         b.Activate();
                     else
                     {
@@ -615,8 +618,8 @@ namespace AdvancedInput
         /// <param name="content">the game content manager</param>
         public void LoadContent(ContentManager content)
         {
-            Voice.LoadContent(content);
-
+            VoiceTime.LoadContent(content);
+            _customAudio.LoadContent(content);
             _font = content.Load<SpriteFont>("Font"); //load font
             _iconConfig = content.Load<Texture2D>("Imgs\\config"); //load texture icon for config
             _dot = new Texture2D(_game.GraphicsDevice, 1, 1); //create 1x1 dot
@@ -811,10 +814,13 @@ namespace AdvancedInput
             return -1;
         }
 
+        private int _numberOfConnectedDevices = 0;
+        private int _lastNumberOfConnectedDevices = 0;
+        private int _maxClutchPointDetected = 0;
         public void Update(float dt)
         {
-            Voice.Update(dt);
-
+            VoiceTime.Update(dt);
+            _customAudio.Update(dt);
             _game.Window.Title = _telemitry.testdata;
 
             if (!TimesOnlyMode)
@@ -831,8 +837,13 @@ namespace AdvancedInput
             {
                 _oldJoystickStates[i] = _currentJoystickStates[i];
                 _currentJoystickStates[i] = Joystick.GetState(i);
+                if (_currentJoystickStates[i].IsConnected)
+                    _numberOfConnectedDevices++;
             }
 
+            if (_lastNumberOfConnectedDevices != _numberOfConnectedDevices)
+                this.Reconnect();
+            _lastNumberOfConnectedDevices = _numberOfConnectedDevices;
             //get all reaquid inputs
 //            for (int i = 0; i < _usedInputDevices.Count; i++)
   //              _currentJoystickStates[_usedInputDevices[i]] = Joystick.GetState(_usedInputDevices[i]);
@@ -898,7 +909,8 @@ namespace AdvancedInput
 
             if (_useRealSecondClutch)
             {
-                float clutchOutput = (IsWheelInputPressed(_secondClutchButtonIndex) + 1) / 2f; 
+                float clutchOutput = (IsWheelInputPressed(_secondClutchButtonIndex) + 1) / 2f;
+                _realSecondClutchInputAmount = clutchOutput;
                 _secondClutchDepressedAmount = MathHelper.Clamp(_secondClutchBitingPoint * clutchOutput, 0, 1); //standard clamp
             }
             else
@@ -910,6 +922,8 @@ namespace AdvancedInput
                         _secondClutchDepressedAmount = _clutchReleaseTimer / _clutchReleaseTimeStart * _newReleaseClutchBitingPointCatch;  //set the clutch point
                     else
                         _secondClutchDepressedAmount = 0;
+
+
                 }
                 else
                     _secondClutchDepressedAmount -= dt * _secondClutchRelaseTime; //release the cutch by release amount
@@ -936,7 +950,8 @@ namespace AdvancedInput
                 _virtualJoyStick.SetJoystickAxis(Convert.ToInt32(HalfValue * _secondClutchDepressedAmount + HalfValue), Axis.HID_USAGE_Z);
 
 
-
+            if (KeyboardAPI.IsKeyPressed(Keys.T))
+                _telemitry.NextDriver();
         }
 
 
@@ -1032,15 +1047,13 @@ namespace AdvancedInput
 
                     if (!_surfaceSettings.IsActive)
                     {
-                        if (TimesOnlyMode)
-                            sb.DrawString(_font, "Timing Only Mode", new Vector2(10, 10), Color.White, 0f, Vector2.Zero, .6f, SpriteEffects.None, 0f);
-
                         _secondClutchButton.DrawTelemitory(sb);
                     }
 
-                    if (_useRealSecondClutch) //if using real clutch hide the release settings
-                        if (_uiElements[1].IsActive)
-                            sb.Draw(_dot, new Rectangle(180, 80, 100, 220), new Color(51,64,69));
+                    if (!TimesOnlyMode)
+                        if (_useRealSecondClutch) //if using real clutch hide the release settings
+                            if (_uiElements[1].IsActive)
+                                sb.Draw(_dot, new Rectangle(180, 80, 100, 220), new Color(51,64,69));
 
                     /*   sb.Draw(_dot, new Rectangle(100, 100, 300, 100), Color.Red * .5f);
                        if (_secondClutchButtonIndex == -1)
@@ -1100,6 +1113,18 @@ namespace AdvancedInput
             }
         }
 
+
+        private bool _isConnected;
+        public void Reconnect()
+        {
+          
+
+            _secondClutchButtonIndex = new Input(_secondClutchButtonIndex.Type, _secondClutchButtonIndex.Index, _secondClutchButtonIndex.InputID);
+            _directionButtons[(int)CardinalDirection.Up] = new Input(_directionButtons[(int)CardinalDirection.Up].Type,  _directionButtons[(int)CardinalDirection.Up].Index,  _directionButtons[(int)CardinalDirection.Up].InputID);
+            _directionButtons[(int)CardinalDirection.Down] = new Input(_directionButtons[(int)CardinalDirection.Down].Type, _directionButtons[(int)CardinalDirection.Down].Index, _directionButtons[(int)CardinalDirection.Down].InputID);
+            _directionButtons[(int)CardinalDirection.Left] = new Input(_directionButtons[(int)CardinalDirection.Left].Type, _directionButtons[(int)CardinalDirection.Left].Index, _directionButtons[(int)CardinalDirection.Left].InputID);
+            _directionButtons[(int)CardinalDirection.Right] = new Input(_directionButtons[(int)CardinalDirection.Right].Type, _directionButtons[(int)CardinalDirection.Right].Index, _directionButtons[(int)CardinalDirection.Right].InputID);
+        }
         public void LoadConfig()
         {
             if (!File.Exists(_configFile))

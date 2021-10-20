@@ -218,9 +218,63 @@
 /processorParam:Quality=Best
 /build:Voice/9p.wav
 
+#begin Voice/coldtires1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/coldtires1.wav
+
+#begin Voice/coldtires2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/coldtires2.wav
+
+#begin Voice/coldtires3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/coldtires3.wav
+
+#begin Voice/coldtires4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/coldtires4.wav
+
+#begin Voice/coldtires5.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/coldtires5.wav
+
 #begin Voice/newrecord.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Voice/newrecord.wav
+
+#begin Voice/warmtires1.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/warmtires1.wav
+
+#begin Voice/warmtires2.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/warmtires2.wav
+
+#begin Voice/warmtires3.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/warmtires3.wav
+
+#begin Voice/warmtires4.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Voice/warmtires4.wav
 

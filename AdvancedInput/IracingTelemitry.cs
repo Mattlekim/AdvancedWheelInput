@@ -19,6 +19,7 @@ namespace AdvancedInput
     class IRacingTelemitry : GameComponent
     {
 
+        public AppMode Mode {  get { return Game1.Mode; } }
         /// <summary>
         /// the speed in miles per hour
         /// </summary>
@@ -112,8 +113,11 @@ namespace AdvancedInput
                     TimeRecords.RemoveAt(index);
             }
 
+            float secondCluthBitngPoint = _wheel._secondClutchBitingPoint;
+            if (_wheel.TimesOnlyMode)
+                secondCluthBitngPoint = _timeModeOnlyClutchBitingPoint;
             //create the record
-            TimeRecord tr = new TimeRecord(_0to60Time, _wheel._secondClutchBitingPoint, _wheel._secondClutchRelaseTime, _holdTime)
+            TimeRecord tr = new TimeRecord(_0to60Time, secondCluthBitngPoint, _wheel._secondClutchRelaseTime, _holdTime)
             {
                 WasClutchStart = _usedSecondClutch,
             };
@@ -157,27 +161,65 @@ namespace AdvancedInput
             //AddTimeRecord0To60();
         }
 
+        private RaceControle.Main _raceControle;
+        public void SetRaceControle(RaceControle.Main raceControle)
+        {
+            _raceControle = raceControle;
+        }
         private int _playerCar = -1;
 
         public string testdata;
+
+        SessionData._SessionInfo._Sessions._ResultsPositions[] orp;
+
+        public DataSample CurrentData;
+        private void LogIncident(DataSample data)
+        {
+            SessionData._SessionInfo._Sessions._ResultsPositions[] rp = data.SessionData.SessionInfo.Sessions[0].ResultsPositions;
+            if (orp != null)
+            for (int i  =0; i < rp.Length; i++)
+                if (rp[i].Incidents > 0)
+                {
+                }
+
+            //DataSampleExtensions.RaceIncidents(data, 1000);
+            orp = rp;
+        }
+
+        public Action<DataSample> OnNewDataSample;
         void iRacing_NewData(DataSample data)
         {
-            if (data.Telemetry.CarDetails.Length > 1)
-                CurrentCar = data.Telemetry.CarDetails[1].Driver.CarScreenName;
-            else
-                CurrentCar = data.Telemetry.CarDetails[0].Driver.CarScreenName;
+            if (OnNewDataSample != null)
+                OnNewDataSample(data);
 
-            SpeedMph = data.Telemetry.Speed * 2.25f;
-            if (!IsConnected)
+            CurrentData = data;
+            if (Mode == AppMode.LaunchHelper)
             {
-                if (OnConnected != null)
-                    OnConnected();
+                if (data.Telemetry.CarDetails.Length > 1)
+                    CurrentCar = data.Telemetry.CarDetails[1].Driver.CarScreenName;
+                else
+                    CurrentCar = data.Telemetry.CarDetails[0].Driver.CarScreenName;
+                //data.Telemetry.CarDetails[0].telemetry
+                SpeedMph = data.Telemetry.Speed * 2.25f;
+                if (!IsConnected)
+                {
+                    if (OnConnected != null)
+                        OnConnected();
+                }
+                _timeSinceGotData = 5f;
+                IsConnected = true;
+
+                return;
             }
-            _timeSinceGotData = 5f;
-            IsConnected = true;
+
+
+
 
             //testdata = $"{data.Telemetry.RRwearM} / {data.Telemetry.RRtempCM}";
-            testdata = data.Telemetry.LatAccel.ToString();
+            //testdata = data.Telemetry.LatAccel.ToString();
+            _timeSinceGotData = 5f;
+            IsConnected = true;
+            LogIncident(data);
         }
 
         public void OnConnect()
@@ -202,6 +244,7 @@ namespace AdvancedInput
 
         private float _timeTillSave = -1f;
 
+        private float _timeModeOnlyClutchBitingPoint;
         private void SetUpStartCheck()
         {
             _0to60Time = 0;
@@ -219,7 +262,14 @@ namespace AdvancedInput
             else
                 _usedSecondClutch = false;
 
-         
+            _timeModeOnlyClutchBitingPoint = _wheel._realSecondClutchInputAmount;
+        }
+
+        public void NextDriver()
+        {
+            iRacing.Replay.MoveToPrevIncident();
+
+          
         }
         public override void Update(GameTime gameTime)
         {
@@ -227,13 +277,17 @@ namespace AdvancedInput
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             _timeSinceGotData -= dt;
 
-            UpdateTopSpeed();
+            if (Mode == AppMode.LaunchHelper)
+            {
+                UpdateTopSpeed();
 
-            _timeTillSave -= dt;
-            _timeTillSave = MathHelper.Clamp(_timeTillSave, -1, 1000000f);
-            
-            if (_timeTillSave <= 0 && _timeTillSave + dt > 0f)
-                SaveTelimtory();
+                _timeTillSave -= dt;
+                _timeTillSave = MathHelper.Clamp(_timeTillSave, -1, 1000000f);
+
+                if (_timeTillSave <= 0 && _timeTillSave + dt > 0f)
+                    SaveTelimtory();
+
+            }
 
             if (IsConnected)
                 if (_timeSinceGotData <= 0)
@@ -244,58 +298,60 @@ namespace AdvancedInput
                         OnDisconected();
                 }
 
-            _0to60Time += dt;
-
-            if (_log0to100 | _log0to150)
+            if (Mode == AppMode.LaunchHelper)
             {
-                if (SpeedMph >= 100)
+                _0to60Time += dt;
+
+                if (_log0to100 | _log0to150)
                 {
-                    if (_log0to100)
+                    if (SpeedMph >= 100)
                     {
-                        AddTimeRecord0To100();
-                        _log0to100 = false;
-                        _log0to150 = true;
+                        if (_log0to100)
+                        {
+                            AddTimeRecord0To100();
+                            _log0to100 = false;
+                            _log0to150 = true;
+                        }
+                        else
+                        if (SpeedMph >= 150)
+                        {
+                            AddTimeRecord0To150();
+                            _log0to150 = false;
+                        }
                     }
                     else
-                    if (SpeedMph >= 150)
+                        if (SpeedMph < 60)
                     {
-                        AddTimeRecord0To150();
+                        _log0to100 = false;
                         _log0to150 = false;
                     }
+                    return;
                 }
-                else
-                    if (SpeedMph < 60)
-                {
-                    _log0to100 = false;
-                    _log0to150 = false;
-                }
-                return;
-            }
 
-            if (_log0to60)
-            {
-                if (SpeedMph > 0.02f)
+                if (_log0to60)
                 {
-                    if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex) > .5f)
-                        _holdTime += dt;
-                    if (SpeedMph >= 60)
+                    if (SpeedMph > 0.02f)
                     {
-                        _log0to60 = false;
-                        _log0to100 = true;
-                        AddTimeRecord0To60();
+                        if (_wheel.IsWheelInputPressed(_wheel._secondClutchButtonIndex) > .5f)
+                            _holdTime += dt;
+                        if (SpeedMph >= 60)
+                        {
+                            _log0to60 = false;
+                            _log0to100 = true;
+                            AddTimeRecord0To60();
+                        }
+                    }
+                    else
+                    {
+                        SetUpStartCheck();
                     }
                 }
                 else
+                if (SpeedMph < .02f)
                 {
                     SetUpStartCheck();
                 }
             }
-            else
-            if (SpeedMph < .02f)
-            {
-                SetUpStartCheck();
-            }
-
         }
 
         public string path;

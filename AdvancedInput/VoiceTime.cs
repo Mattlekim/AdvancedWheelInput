@@ -24,7 +24,7 @@ namespace AdvancedInput
         }
     }
 
-    public class Voice
+    public class VoiceTime
     {
         private static List<SoundEffect> _voicePoint = new List<SoundEffect>();
         private static List<SoundEffect> _voiceNumber = new List<SoundEffect>();

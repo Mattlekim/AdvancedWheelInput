@@ -15,7 +15,10 @@ namespace AdvancedInput
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         AdvanceWheel Wheel;
-        
+
+        RaceControle.Main _raceControle;
+
+        public static AppMode Mode = AppMode.LaunchHelper;
 
         public Game1()
         {
@@ -54,14 +57,28 @@ namespace AdvancedInput
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            Wheel = new AdvanceWheel(this);
-            Wheel.LoadContent(Content);
 
             Components.Add(new IRacingTelemitry(this));
             IRacingTelemitry irt = Components[2] as IRacingTelemitry;
-            irt.SetWheel(Wheel);
 
-            Wheel.SetTelemitory();
+            if (Mode == AppMode.LaunchHelper)
+            {
+                Wheel = new AdvanceWheel(this);
+                Wheel.LoadContent(Content);
+
+
+                irt.SetWheel(Wheel);
+
+                Wheel.SetTelemitory();
+            }
+            else
+            {
+                _raceControle = new RaceControle.Main(this);
+                irt.SetRaceControle(_raceControle);
+                this.Window.Title = "Race Controle";
+            }
+
+            return;
 
             // TODO: use this.Content to load your game content here
         }
@@ -83,11 +100,14 @@ namespace AdvancedInput
         protected override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-         
-            
-       
+
+
+
             // TODO: Add your update logic here
-            Wheel.Update(dt);
+            if (Mode == AppMode.LaunchHelper)
+                Wheel.Update(dt);
+            else
+                _raceControle.Update(dt);
 
             
             base.Update(gameTime);
@@ -102,7 +122,11 @@ namespace AdvancedInput
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin();
-            Wheel.Draw(spriteBatch);
+            if (Mode == AppMode.LaunchHelper)
+                Wheel.Draw(spriteBatch);
+            else
+                _raceControle.Draw(spriteBatch);
+
             spriteBatch.End();
 
             base.Draw(gameTime);

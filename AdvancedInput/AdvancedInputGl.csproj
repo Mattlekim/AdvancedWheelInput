@@ -46,8 +46,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AdvanceWheelcs.cs" />
+    <Compile Include="AppMode.cs" />
+    <Compile Include="CustomAudioMsg.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="IracingTelemitry.cs" />
+    <Compile Include="RaceControle\Main.cs" />
     <Compile Include="TimeRecord.cs" />
     <Compile Include="UI\Button.cs" />
     <Compile Include="ConfigArea.cs" />
@@ -60,10 +63,13 @@
     <Compile Include="UI\Slider.cs" />
     <Compile Include="UI\Surface.cs" />
     <Compile Include="UI\UiEliment.cs" />
-    <Compile Include="Voice.cs" />
+    <Compile Include="VoiceTime.cs" />
     <Compile Include="WheelState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="iRacingDirector.Plugin.Support, Version=1.0.0.48, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\iRacingDirector.Plugin.Support.1.0.0.48\lib\net40-client\iRacingDirector.Plugin.Support.dll</HintPath>
+    </Reference>
     <Reference Include="iRacingSDK, Version=1.0.0.43, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\iRacingSDK.1.0.0.43\lib\net40-client\iRacingSDK.dll</HintPath>
     </Reference>
