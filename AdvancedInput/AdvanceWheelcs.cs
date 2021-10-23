@@ -20,6 +20,12 @@ using AdvancedInput.UI;
 
 namespace AdvancedInput
 {
+    //==================================ISSUES======================================
+    //currently and issue with FANATEC devices as 2 appeir in windows. both have the same GUID so 
+    //this makes it very hard to select the correct on for prossessing inputs
+    //workaround is to detect if 2 devices have the same GUID and have a int variable to work out which is which
+    //and eddit the GUID
+
     /// <summary>
     /// this class does all the work with the second clutch emulations
     /// the plan is to add even more function to this in the future
