@@ -833,6 +833,7 @@ namespace AdvancedInput
              
             }
             //set old state
+            _numberOfConnectedDevices = 0;
             for (int i = 0; i < 8; i++)
             {
                 _oldJoystickStates[i] = _currentJoystickStates[i];
