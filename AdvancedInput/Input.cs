@@ -19,6 +19,11 @@ namespace AdvancedInput
     public class Input
     {
         /// <summary>
+        /// the key to know if there is an offset needed to be applyed
+        /// </summary>
+        public static string ControlerIndexOfsetKey = "#!#";
+
+        /// <summary>
         /// the input type
         /// </summary>
         public InputType Type;
@@ -33,6 +38,11 @@ namespace AdvancedInput
         /// therefore if we catch the actual id of the device we can keep track of it
         /// </summary>
         public string InputID;
+
+        /// <summary>
+        /// this is if there are 2 controlers with the same GUID id
+        /// </summary>
+        private int _controleIndexOffset = 0;
 
         /// <summary>
         /// the input index
@@ -58,8 +68,33 @@ namespace AdvancedInput
                 return;
             }
 
-            for (int i =0; i < 8; i++)
-                if (Joystick.GetCapabilities(i).Identifier == InputID)
+            if (InputID.Contains(ControlerIndexOfsetKey))
+            {
+                try
+                {
+                    InputDeviceIndex = Convert.ToInt32(ControlerIndexOfsetKey[ControlerIndexOfsetKey.Length - 1]);
+                }
+                catch
+                {
+                    InputDeviceIndex = 0;
+                }
+            }
+
+            List<String> _tmp = new List<string>();
+
+            string s = string.Empty;
+            for (int i = 0; i < 8; i++)
+            {
+                s = (Joystick.GetCapabilities(i).Identifier);
+
+                if (!_tmp.Contains(s))
+                    _tmp.Add(s);
+                else
+                    _tmp.Add($"{s}{ControlerIndexOfsetKey}{i}");
+            }
+
+            for (int i = 0; i < 8; i++)
+                if (_tmp[i] == InputID)
                 {
                     InputDeviceIndex = i;
                     return;

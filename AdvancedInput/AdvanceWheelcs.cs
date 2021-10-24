@@ -699,6 +699,9 @@ namespace AdvancedInput
             if (i.Index == -1) //if the input button / axis is null
                 return 0;
 
+            if (i.InputDeviceIndex >= _currentJoystickStates.Length)
+                return 0;
+
             JoystickState _inputWheel = _currentJoystickStates[i.InputDeviceIndex];
             
             switch (i.Type)
@@ -745,15 +748,18 @@ namespace AdvancedInput
             return 0;
         }
 
-        
+        public static int NumberOfDeviceToDetect = 8;
         /// <summary>
         /// the old Joystick states
         /// </summary>
-        JoystickState[] _oldJoystickStates = new JoystickState[8];
+        JoystickState[] _oldJoystickStates = new JoystickState[NumberOfDeviceToDetect];
         /// <summary>
         /// the new joystick states
         /// </summary>
-        JoystickState[] _currentJoystickStates = new JoystickState[8];
+        JoystickState[] _currentJoystickStates = new JoystickState[NumberOfDeviceToDetect];
+
+        private JoystickCapabilities[] _tmpJoyCapabilitys = new JoystickCapabilities[NumberOfDeviceToDetect];
+        private List<string> _joyIds = new List<string>();
         public Input GetInputButton()
         {
             if (KeyboardAPI.IsKeyPressed(Keys.Escape))
@@ -761,18 +767,34 @@ namespace AdvancedInput
 
             JoystickCapabilities jCapabilityes;
             JoystickState jState;
-            for (int i = 0; i < 8; i++) //loop though all joystics
+            string JoySickId;
+            _joyIds.Clear();
+
+            for (int i = 0; i < NumberOfDeviceToDetect; i++) //loop though all joystics
             {
-                jCapabilityes = Joystick.GetCapabilities(i); //get joystick capabilitys
+                _tmpJoyCapabilitys[i] = Joystick.GetCapabilities(i); //get joystick capabilitys
+                if (_tmpJoyCapabilitys[i].IsConnected)
+                    if (!_joyIds.Contains(_tmpJoyCapabilitys[i].Identifier)) //if that id does not already exists
+                        _joyIds.Add(_tmpJoyCapabilitys[i].Identifier); //add it
+                    else
+                    {
+                        _joyIds.Add($"{_tmpJoyCapabilitys[i].Identifier}{Input.ControlerIndexOfsetKey}{i}");
+                    }
+            }
+
+            for (int i = 0; i < _joyIds.Count; i++) //loop though all joystics
+            {
+                jCapabilityes = _tmpJoyCapabilitys[i]; //get joystick capabilitys
                 if (jCapabilityes.IsConnected) //if is connectec
                 {
+                    JoySickId = _joyIds[i];
                     jState = Joystick.GetState(i); //get its state
 
                     for (int c = 0; c < jCapabilityes.ButtonCount; c++)
                         if (jState.Buttons[c] == ButtonState.Pressed) //at this point we want to log the button and the input device
                         {
                             _oldJoystickStates[i] = jState;
-                            return new Input(InputType.Button, c, jCapabilityes.Identifier);
+                            return new Input(InputType.Button, c, JoySickId);
                         }
 
                     for (int c = 0; c < jCapabilityes.HatCount; c++)
@@ -780,25 +802,25 @@ namespace AdvancedInput
                         if (jState.Hats[c].Up == ButtonState.Pressed)
                         {
                             _oldJoystickStates[i] = jState;
-                            return new Input(InputType.HatUp, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatUp, c, JoySickId);
                         }
 
                         if (jState.Hats[c].Down == ButtonState.Pressed)
                         {
                             _oldJoystickStates[i] = jState;
-                            return new Input(InputType.HatDown, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatDown, c, JoySickId);
                         }
 
                         if (jState.Hats[c].Left == ButtonState.Pressed)
                         {
                             _oldJoystickStates[i] = jState;
-                            return new Input(InputType.HatLeft, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatLeft, c, JoySickId);
                         }
 
                         if (jState.Hats[c].Right == ButtonState.Pressed)
                         {
                             _oldJoystickStates[i] = jState;
-                            return new Input(InputType.HatRight, c, jCapabilityes.Identifier);
+                            return new Input(InputType.HatRight, c, JoySickId);
                         }
                     }
 
@@ -809,12 +831,12 @@ namespace AdvancedInput
                             if (MathHelper.Distance(jState.Axes[a], _oldJoystickStates[i].Axes[a]) > 1000) //if more than half pressed
                             {
                                 _oldJoystickStates[i] = jState;
-                                return new Input(InputType.Anolog, a, jCapabilityes.Identifier);
+                                return new Input(InputType.Anolog, a, JoySickId);
                             }
                     }
 
-                   
-                    
+
+
                 }
             }
             return -1;
